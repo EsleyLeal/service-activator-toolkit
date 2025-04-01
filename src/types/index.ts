@@ -18,6 +18,7 @@ export interface ServiceActivationFormData {
   phoneNumber?: string;
   sipPassword?: string;
   sipServer?: string;
+  sipIp?: string;
   streetAddress?: string;
   referencePoint?: string;
   slot?: string;

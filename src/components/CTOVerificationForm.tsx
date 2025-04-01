@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ServiceActivationFormData, OLTOption } from '@/types';
 
 interface CTOVerificationFormProps {
@@ -50,6 +51,7 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
   const [selectedFibers, setSelectedFibers] = useState<string[]>([]);
   const [ponSlots, setPonSlots] = useState<{ [key: string]: string }>({});
   const [ponOutside, setPonOutside] = useState<string[]>([]);
+  const [portCount, setPortCount] = useState<"8" | "16">("8");
 
   const handleFiberSelection = (color: string) => {
     setSelectedFibers(prev => {
@@ -82,6 +84,10 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
       onPonOutsideChange(newOutside);
       return newOutside;
     });
+  };
+
+  const handlePortCountChange = (value: "8" | "16") => {
+    setPortCount(value);
   };
 
   return (
@@ -184,7 +190,25 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
         <TabsContent value="slots" className="space-y-4 p-4 border rounded-md">
           <h3 className="font-medium text-lg mb-2">Preenchimento de PON</h3>
           
-          {Array.from({ length: 8 }, (_, i) => i + 1).map(num => (
+          <div className="mb-4">
+            <Label className="mb-2 block">Quantidade de Portas</Label>
+            <RadioGroup 
+              value={portCount} 
+              onValueChange={(v) => handlePortCountChange(v as "8" | "16")}
+              className="flex space-x-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="8" id="port-8" />
+                <Label htmlFor="port-8">8 Portas</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="16" id="port-16" />
+                <Label htmlFor="port-16">16 Portas</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          
+          {Array.from({ length: parseInt(portCount) }, (_, i) => i + 1).map(num => (
             <div key={`slot-${num}`} className="flex items-center gap-4 mb-2">
               <div className="w-6">{num} -</div>
               <Input

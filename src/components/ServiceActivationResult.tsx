@@ -79,14 +79,21 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
     </div>
   );
 
-  const renderTelephony = () => (
-    <div id="result-content" className="whitespace-pre-line text-left">
-      <p className="font-bold text-center mb-4">ATIVAÇÃO DE TELEFONIA</p>
-      <p>NUMERO ATRIBUIDO - {formData.phoneNumber} NOVO</p>
-      <p>SENHA SIPULSE - {formData.sipPassword}</p>
-      <p>SIPSERVER - {formData.sipServer}</p>
-    </div>
-  );
+  const renderTelephony = () => {
+    const phoneNumber = formData.phoneNumber || '';
+    const phoneDisplay = document.getElementById('phoneDisplay')?.textContent || phoneNumber;
+    const sipIp = formData.sipIp || '172.31.2.18';
+    
+    return (
+      <div id="result-content" className="whitespace-pre-line text-left">
+        <p className="font-bold text-center mb-4">ATIVAÇÃO DE TELEFONIA</p>
+        <p>NUMERO ATRIBUIDO - {phoneDisplay} NOVO</p>
+        <p>SENHA SIPULSE - {formData.sipPassword}</p>
+        <p>SIPSERVER - sip:{phoneDisplay}@{sipIp}</p>
+        {formData.sipIp && <p>IP - {formData.sipIp}</p>}
+      </div>
+    );
+  };
 
   const renderCTOVerification = () => {
     const ponSlots = formData.ponSlots || {};
@@ -143,8 +150,16 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
       <p>FHTT NOVO - {formData.fhttNew}</p>
       <p>PATRIMONIO - {formData.patrimony}</p>
       <p>TOPOLOGIA - {formData.topology}</p>
-      <p>LOCALIDADE - {formData.location}</p>
+      <p>OLT - {formData.olt}</p>
+      <p>CTO - {formData.cto}</p>
       <p>PPOE - {formData.pppoe}</p>
+      {formData.topology === 'ONT' && (
+        <>
+          <p>SENHA WIFI - {formData.wifiPassword}</p>
+          <p>REDE 2.4GHz - TELY_{formData.code.split('-')[0] || formData.code}_2G</p>
+          <p>REDE 5GHz - TELY_{formData.code.split('-')[0] || formData.code}_5G</p>
+        </>
+      )}
     </div>
   );
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -72,7 +71,6 @@ const ServiceActivationForm: React.FC = () => {
   const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
 
-  // Generate PPPoE based on client name and patrimony
   useEffect(() => {
     if (formData.client && formData.patrimony) {
       const names = formData.client.split('-')[1]?.trim().split(' ') || [];
@@ -90,11 +88,9 @@ const ServiceActivationForm: React.FC = () => {
     }
   }, [formData.client, formData.patrimony]);
 
-  // Generate WiFi network names based on client code
   useEffect(() => {
     if (formData.code) {
       const clientCode = formData.code.split('-')[0] || formData.code;
-      // This is just for display purposes, it's not stored in the formData
       console.log(`WiFi 2.4G: TELY_${clientCode}_2G`);
       console.log(`WiFi 5G: TELY_${clientCode}_5G`);
     }
@@ -131,7 +127,6 @@ const ServiceActivationForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form data based on service type
     if (formData.serviceType === 'internet-activation' || 
         formData.serviceType === 'equipment-change') {
       if (!formData.client || !formData.technician || !formData.code || 
@@ -146,7 +141,6 @@ const ServiceActivationForm: React.FC = () => {
       }
     }
 
-    // Special validation for telephone activation
     if (formData.serviceType === 'telephony-activation') {
       if (!formData.phoneNumber) {
         toast({
@@ -158,7 +152,6 @@ const ServiceActivationForm: React.FC = () => {
       }
     }
 
-    // Set SIP server for telephony
     if (formData.serviceType === 'telephony-activation' && formData.phoneNumber) {
       setFormData(prev => ({
         ...prev,
@@ -251,6 +244,8 @@ const ServiceActivationForm: React.FC = () => {
             handleInputChange={handleInputChange} 
             handleSelectChange={handleSelectChange}
             topologyOptions={TOPOLOGY_OPTIONS}
+            oltOptions={OLT_OPTIONS}
+            handleGenerateWifiPassword={handleGenerateWifiPassword}
           />
         );
       case 'server-migration':
