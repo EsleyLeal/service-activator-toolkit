@@ -11,7 +11,7 @@ const Index = () => {
           Gerenciamento de ativações, mudanças e verificações da rede
         </p>
       </div>
-      <style jsx global>{`
+      <style>{`
         .signal-good {
           color: green;
           font-weight: bold;
