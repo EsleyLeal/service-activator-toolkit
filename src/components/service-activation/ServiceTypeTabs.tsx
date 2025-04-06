@@ -17,7 +17,7 @@ const ServiceTypeTabs: React.FC<ServiceTypeTabsProps> = ({
         <TabsTrigger value="internet-activation">Internet</TabsTrigger>
         <TabsTrigger value="telephony-activation">Telefonia</TabsTrigger>
         <TabsTrigger value="equipment-change">Mudança de Equipamento</TabsTrigger>
-        <TabsTrigger value="server-migration">Migração de Servidores</TabsTrigger>
+        <TabsTrigger value="server-migration">Migração</TabsTrigger>
       </TabsList>
       <TabsList className="grid grid-cols-4 mb-4">
         <TabsTrigger value="ownership-change">Troca de Titularidade</TabsTrigger>

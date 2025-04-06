@@ -25,12 +25,23 @@ const TelephonyActivationForm: React.FC<TelephonyActivationFormProps> = ({
     const min = 100;
     const max = 1000;
     const randomIndex = Math.floor(Math.random() * (max - min + 1)) + min;
-    setIndexValue(randomIndex.toString());
+    const indexStr = randomIndex.toString();
+  
+    // Atualiza o state local
+    setIndexValue(indexStr);
+  
+    // Atualiza o formData do pai
+    handleInputChange({
+      target: {
+        name: 'indexValue',
+        value: indexStr
+      }
+    } as React.ChangeEvent<HTMLInputElement>);
   };
 
   const getPhoneWithIndex = () => {
     if (!formData.phoneNumber || !useIndex || !indexValue) return formData.phoneNumber || '';
-    return `${formData.phoneNumber}-${indexValue}`;
+    return `${formData.phoneNumber}`;
   };
 
   return (
@@ -89,18 +100,26 @@ const TelephonyActivationForm: React.FC<TelephonyActivationFormProps> = ({
           <div>
             <Label htmlFor="phoneIndex">Índice (100-1000)</Label>
             <div className="flex gap-2">
-              <Input
-                id="phoneIndex"
-                value={indexValue}
-                onChange={(e) => setIndexValue(e.target.value)}
-                placeholder="Ex: 500"
-              />
+            <Input
+  id="phoneIndex"
+  value={indexValue}
+  onChange={(e) => {
+    setIndexValue(e.target.value);  // Atualiza state local
+    handleInputChange({
+      target: {
+        name: 'indexValue',
+        value: e.target.value
+      }
+    } as React.ChangeEvent<HTMLInputElement>);
+  }}
+  placeholder="Ex: 500"
+/>
               <Button type="button" variant="outline" onClick={generateRandomIndex}>
                 Gerar
               </Button>
             </div>
           </div>
-          <div>
+          {/* <div>
             <Label htmlFor="phoneDisplay">Número com Índice</Label>
             <Input
               id="phoneDisplay"
@@ -108,13 +127,13 @@ const TelephonyActivationForm: React.FC<TelephonyActivationFormProps> = ({
               readOnly
               placeholder="Número com índice"
             />
-          </div>
+          </div> */}
         </div>
       )}
 
       {useIp && (
         <div>
-          <Label htmlFor="sipIp">IP do SIP</Label>
+          <Label htmlFor="sipIp">IP:</Label>
           <Input
             id="sipIp"
             name="sipIp"
@@ -128,19 +147,19 @@ const TelephonyActivationForm: React.FC<TelephonyActivationFormProps> = ({
       <div>
         <Label htmlFor="sipServer">SIPSERVER</Label>
         <Input
-          id="sipServer"
-          name="sipServer"
-          value={
-            formData.phoneNumber 
-              ? `sip:${getPhoneWithIndex()}@${formData.sipIp || '172.31.2.18'}`
-              : ''
-          }
-          placeholder="Gerado automaticamente"
-          readOnly
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          Formato: sip:número@{formData.sipIp || '172.31.2.18'}
-        </p>
+  id="sipServer"
+  name="sipServer"
+  value={
+    formData.phoneNumber 
+      ? `sip:${getPhoneWithIndex()}@172.31.2.18`
+      : ''
+  }
+  placeholder="Gerado automaticamente"
+  readOnly
+/>
+<p className="text-xs text-gray-500 mt-1">
+  Formato: sip:número@172.31.2.18
+</p>
       </div>
     </div>
   );

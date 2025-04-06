@@ -5,6 +5,11 @@
   text-align: center;
 }
 
+.signal-excelente { color: green; }
+.signal-aceitavel { color: orange; }
+.signal-margem     { color: #ccc; } /* Exemplo */
+.signal-problem    { color: red; }
+
 .logo {
   height: 6em;
   padding: 1.5em;

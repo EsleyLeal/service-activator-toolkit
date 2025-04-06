@@ -5,12 +5,16 @@ import { Label } from '@/components/ui/label';
 import { ServiceActivationFormData } from '@/types';
 
 interface ServerMigrationFormProps {
+  client:string;
+  technician: string;
   formData: ServiceActivationFormData;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
   formData,
+  client,
+  technician,
   handleInputChange
 }) => {
   return (
@@ -21,9 +25,9 @@ const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
           <Input
             id="client"
             name="client"
-            value={formData.client}
+            value={client}
             onChange={handleInputChange}
-            placeholder="Nome completo do cliente"
+            placeholder="Nome do cliente"
           />
         </div>
         <div>
@@ -31,7 +35,7 @@ const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
           <Input
             id="technician"
             name="technician"
-            value={formData.technician}
+            value={technician}
             onChange={handleInputChange}
             placeholder="Nome do técnico"
           />
@@ -50,26 +54,26 @@ const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
           />
         </div>
         <div>
-          <Label htmlFor="location">Localidade</Label>
+          <Label htmlFor="fhtt">FHTT</Label>
           <Input
-            id="location"
-            name="location"
-            value={formData.location || ''}
+            id="fhtt"
+            name="fhtt"
+            value={formData.fhtt}
             onChange={handleInputChange}
-            placeholder="Localidade do servidor"
+            placeholder="FHTT ou SN"
           />
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="olt">OLT Atual</Label>
+          <Label htmlFor="cto">CTO</Label>
           <Input
-            id="olt"
-            name="olt"
-            value={formData.olt}
+            id="cto"
+            name="cto"
+            value={formData.cto}
             onChange={handleInputChange}
-            placeholder="OLT atual"
+            placeholder="Identificação da CTO"
           />
         </div>
         <div>
@@ -82,18 +86,20 @@ const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
             placeholder="Informação PPPOE"
           />
         </div>
+
+        <div>
+          <Label htmlFor="olt">OLT</Label>
+          <Input
+            id="olt"
+            name="olt"
+            value={formData.olt}
+            onChange={handleInputChange}
+            placeholder="Selecione a OLT"
+          />
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="streetAddress">Detalhes da Migração</Label>
-        <Input
-          id="streetAddress"
-          name="streetAddress"
-          value={formData.streetAddress || ''}
-          onChange={handleInputChange}
-          placeholder="Detalhes sobre a migração dos servidores"
-        />
-      </div>
+      
     </div>
   );
 };

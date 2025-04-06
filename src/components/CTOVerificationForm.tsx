@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ServiceActivationFormData, OLTOption } from '@/types';
 
+
 interface CTOVerificationFormProps {
   formData: ServiceActivationFormData;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -38,6 +39,8 @@ const FIBER_COLORS = [
   { name: 'Rosa', class: 'pink-fiber' },
   { name: 'Aqua', class: 'aqua-fiber' }
 ];
+
+
 
 const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
   formData,

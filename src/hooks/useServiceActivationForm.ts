@@ -26,16 +26,23 @@ export const useServiceActivationForm = () => {
 
   useEffect(() => {
     if (formData.client && formData.patrimony) {
+      const ignoreWords = ['de', 'do', 'da', 'das', 'dos', 'e']; // Adicione outras palavras que você deseja ignorar
       const names = formData.client.split('-')[1]?.trim().split(' ') || [];
+      
       if (names.length >= 2) {
-        const firstName = names[0].toLowerCase();
-        const secondName = names[1].toLowerCase();
-        const pppoe1 = `${firstName}.${secondName}`;
-        
-        setFormData(prev => ({
-          ...prev,
-          pppoe: pppoe1
-        }));
+        // Filtra os nomes, removendo as palavras que não devem ser usadas
+        const filteredNames = names.filter(name => !ignoreWords.includes(name.toLowerCase()));
+
+        if (filteredNames.length >= 2) {
+          const firstName = filteredNames[0].toLowerCase();
+          const secondName = filteredNames[1].toLowerCase();
+          const pppoe1 = `${firstName}.${secondName}     ${firstName}${formData.patrimony}`;
+          
+          setFormData(prev => ({
+            ...prev,
+            pppoe: pppoe1
+          }));
+        }
       }
     }
   }, [formData.client, formData.patrimony]);
@@ -77,8 +84,8 @@ export const useServiceActivationForm = () => {
   };
 
   const validateForm = () => {
-    if (formData.serviceType === 'internet-activation' || 
-        formData.serviceType === 'equipment-change') {
+    if (formData.serviceType === 'internet-activation'
+       ) {
       if (!formData.client || !formData.technician || !formData.code || 
           !formData.fhtt || !formData.patrimony || !formData.cto || 
           !formData.olt) {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,8 +28,19 @@ const EquipmentChangeForm: React.FC<EquipmentChangeFormProps> = ({
   oltOptions,
   handleGenerateWifiPassword
 }) => {
+  // Função para copiar texto para a área de transferência
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).catch(err => {
+      console.error("Erro ao copiar texto: ", err);
+    });
+  };
+
+  // Extração simplificada do clientCode
+  const clientCode = formData.code.split('-')[0] || formData.code;
+
   return (
     <div className="space-y-4">
+      {/* Linha de Cliente e Técnico */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="client">Cliente</Label>
@@ -53,51 +63,84 @@ const EquipmentChangeForm: React.FC<EquipmentChangeFormProps> = ({
           />
         </div>
       </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+      {/* Seleção do tipo de alteração */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="code">Código</Label>
-          <Input
-            id="code"
-            name="code"
-            value={formData.code}
-            onChange={handleInputChange}
-            placeholder="Ex: 92516"
-          />
-        </div>
-        <div>
-          <Label htmlFor="fhtt">FHTT Antigo</Label>
-          <Input
-            id="fhtt"
-            name="fhtt"
-            value={formData.fhtt}
-            onChange={handleInputChange}
-            placeholder="FHTT antigo"
-          />
-        </div>
-        <div>
-          <Label htmlFor="fhttNew">FHTT Novo</Label>
-          <Input
-            id="fhttNew"
-            name="fhttNew"
-            value={formData.fhttNew || ''}
-            onChange={handleInputChange}
-            placeholder="FHTT novo"
-          />
+          <Label htmlFor="changeType">MUDAR EQUIPAMENTO</Label>
+          <Select 
+            value={formData.changeType} 
+            onValueChange={(value) => handleSelectChange('changeType', value)}
+          >
+            <SelectTrigger id="changeType">
+              <SelectValue placeholder="Selecione o tipo de equipamento" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="fhtt">TROCA DE ONU</SelectItem>
+              <SelectItem value="fhtt-patrimony">TROCAR TUDO</SelectItem>
+              <SelectItem value="patrimony">TROCAR ROTEADOR</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
+      {/* Campos para Código e FHTT */}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+  <div>
+    <Label htmlFor="code">Código do Cliente</Label>
+    <Input
+      id="code"
+      name="code"
+      value={formData.code}
+      onChange={handleInputChange}
+      placeholder="Ex: 92516"
+    />
+  </div>
+
+  {/* Campo FHTT Antigo aparece somente quando a mudança envolve FHTT */}
+  {(formData.changeType === 'fhtt' || formData.changeType === 'fhtt-patrimony') && (
+    <div>
+      <Label htmlFor="fhtt">FHTT Antigo</Label>
+      <Input
+        id="fhtt"
+        name="fhtt"
+        value={formData.fhtt}
+        onChange={handleInputChange}
+        placeholder="FHTT antigo"
+      />
+    </div>
+  )}
+
+  {/* Campo FHTT Novo aparece somente quando a mudança envolve FHTT */}
+  {(formData.changeType === 'fhtt' || formData.changeType === 'fhtt-patrimony') && (
+    <div>
+      <Label htmlFor="fhttNew">FHTT Novo</Label>
+      <Input
+        id="fhttNew"
+        name="fhttNew"
+        value={formData.fhttNew || ''}
+        onChange={handleInputChange}
+        placeholder="FHTT novo"
+      />
+    </div>
+  )}
+</div>
+
+
+      {/* Campos para Patrimônio (condicional), Topologia e OLT */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Label htmlFor="patrimony">Patrimônio</Label>
-          <Input
-            id="patrimony"
-            name="patrimony"
-            value={formData.patrimony}
-            onChange={handleInputChange}
-            placeholder="Ex: 102022"
-          />
-        </div>
+        {(formData.changeType === 'fhtt-patrimony' || formData.changeType === 'patrimony') && (
+          <div>
+            <Label htmlFor="patrimony">Patrimônio</Label>
+            <Input
+              id="patrimony"
+              name="patrimony"
+              value={formData.patrimony}
+              onChange={handleInputChange}
+              placeholder="Ex: 102022"
+            />
+          </div>
+        )}
         <div>
           <Label htmlFor="topology">Topologia</Label>
           <Select 
@@ -136,6 +179,7 @@ const EquipmentChangeForm: React.FC<EquipmentChangeFormProps> = ({
         </div>
       </div>
 
+      {/* Se a topologia for ONT, renderiza campos extras */}
       {formData.topology === 'ONT' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -149,56 +193,40 @@ const EquipmentChangeForm: React.FC<EquipmentChangeFormProps> = ({
                 placeholder="Senha do WiFi"
               />
               {handleGenerateWifiPassword && (
-                <Button type="button" variant="outline" onClick={handleGenerateWifiPassword}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleGenerateWifiPassword}
+                >
                   Gerar
                 </Button>
               )}
             </div>
           </div>
-          <div>
-            {formData.code && (
-              <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-gray-100 rounded-md">
-                <div>
-                  <Label>Rede 2.4GHz</Label>
-                  <div className="font-medium">
-                    TELY_{formData.code.split('-')[0] || formData.code}_2G
-                  </div>
-                </div>
-                <div>
-                  <Label>Rede 5GHz</Label>
-                  <div className="font-medium">
-                    TELY_{formData.code.split('-')[0] || formData.code}_5G
-                  </div>
+          {formData.code && (
+            <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-gray-700 rounded-md">
+              <div>
+                <Label>Rede 2.4GHz</Label>
+                <div
+                  className="font-medium cursor-pointer text-blue-400"
+                  onClick={() => copyToClipboard(`TELY_${clientCode}_2G`)}
+                >
+                  TELY_{clientCode}_2G
                 </div>
               </div>
-            )}
-          </div>
+              <div>
+                <Label>Rede 5GHz</Label>
+                <div
+                  className="font-medium cursor-pointer text-blue-400"
+                  onClick={() => copyToClipboard(`TELY_${clientCode}_5G`)}
+                >
+                  TELY_{clientCode}_5G
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="cto">CTO</Label>
-          <Input
-            id="cto"
-            name="cto"
-            value={formData.cto}
-            onChange={handleInputChange}
-            placeholder="Número da CTO"
-          />
-        </div>
-        <div>
-          <Label htmlFor="pppoe">PPPoE</Label>
-          <Input
-            id="pppoe"
-            name="pppoe"
-            value={formData.pppoe}
-            onChange={handleInputChange}
-            placeholder="Gerado automaticamente"
-            readOnly
-          />
-        </div>
-      </div>
     </div>
   );
 };

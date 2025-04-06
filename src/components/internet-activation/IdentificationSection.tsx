@@ -19,7 +19,7 @@ const IdentificationSection: React.FC<IdentificationSectionProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div>
-        <Label htmlFor="code">Código</Label>
+        <Label htmlFor="code">Código do Cliente</Label>
         <Input
           id="code"
           name="code"
@@ -35,7 +35,7 @@ const IdentificationSection: React.FC<IdentificationSectionProps> = ({
           name="fhtt"
           value={fhtt}
           onChange={handleInputChange}
-          placeholder="Número FHTT"
+          placeholder="FHTT ou SN"
         />
       </div>
       <div>

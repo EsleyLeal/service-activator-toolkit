@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -20,6 +19,7 @@ const FormActions: React.FC<FormActionsProps> = ({
         Gerar Informações
       </Button>
     </div>
+    
   );
 };
 

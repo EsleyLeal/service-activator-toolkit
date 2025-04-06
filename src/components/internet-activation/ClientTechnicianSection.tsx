@@ -21,7 +21,7 @@ const ClientTechnicianSection: React.FC<ClientTechnicianSectionProps> = ({
         <Input
           id="client"
           name="client"
-          placeholder="Ex: 92633-LEONARDO ALVES DO NASCIMENTO"
+          placeholder="Nome do cliente"
           value={client}
           onChange={handleInputChange}
         />

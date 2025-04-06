@@ -19,8 +19,14 @@ export interface ServiceActivationFormData {
   sipPassword?: string;
   sipServer?: string;
   sipIp?: string;
+  indexValue: string;
   streetAddress?: string;
   referencePoint?: string;
+  called: string;
+  openBy: string;
+  newHolder: string;
+  identity: string;
+  changeType:string;
   slot?: string;
   pon?: string;
   fiberFusion?: string[];

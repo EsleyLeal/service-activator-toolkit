@@ -1,7 +1,7 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { ServiceActivationFormData } from '@/types';
 
 interface AddressChangeFormProps {
@@ -13,6 +13,12 @@ const AddressChangeForm: React.FC<AddressChangeFormProps> = ({
   formData,
   handleInputChange
 }) => {
+  const [isPatrimonyVisible, setIsPatrimonyVisible] = useState(false);
+
+  const handleSwitchChange = (checked: boolean) => {
+    setIsPatrimonyVisible(checked);
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -37,84 +43,58 @@ const AddressChangeForm: React.FC<AddressChangeFormProps> = ({
           />
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="code">Código</Label>
-          <Input
-            id="code"
-            name="code"
-            value={formData.code}
-            onChange={handleInputChange}
-            placeholder="Código do cliente"
-          />
-        </div>
-        <div>
-          <Label htmlFor="fhtt">FHTT</Label>
-          <Input
-            id="fhtt"
-            name="fhtt"
-            value={formData.fhtt}
-            onChange={handleInputChange}
-            placeholder="Número FHTT"
-          />
-        </div>
+      <div>
+        <Label htmlFor="fhtt">FHTT</Label>
+        <Input
+          id="fhtt"
+          name="fhtt"
+          value={formData.fhtt}
+          onChange={handleInputChange}
+          placeholder="Número FHTT"
+        />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="streetAddress">Endereço Anterior</Label>
-          <Input
-            id="streetAddress"
-            name="streetAddress"
-            value={formData.streetAddress || ''}
-            onChange={handleInputChange}
-            placeholder="Endereço anterior"
-          />
-        </div>
-        <div>
-          <Label htmlFor="referencePoint">Novo Endereço</Label>
-          <Input
-            id="referencePoint"
-            name="referencePoint"
-            value={formData.referencePoint || ''}
-            onChange={handleInputChange}
-            placeholder="Novo endereço"
-          />
-        </div>
+      <div className="flex items-center space-x-2">
+        <Switch
+          checked={isPatrimonyVisible}
+          onCheckedChange={handleSwitchChange}
+          id="equipChange"
+        />
+        <Label htmlFor="equipChange">ROTEADOR</Label>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {isPatrimonyVisible && (
         <div>
-          <Label htmlFor="cto">CTO Atual</Label>
+          <Label htmlFor="patrimony">Patrimônio</Label>
           <Input
-            id="cto"
-            name="cto"
-            value={formData.cto}
+            id="patrimony"
+            name="patrimony"
+            value={formData.patrimony}
             onChange={handleInputChange}
-            placeholder="CTO atual"
+            placeholder="Ex: 102022"
           />
         </div>
-        <div>
-          <Label htmlFor="olt">OLT</Label>
-          <Input
-            id="olt"
-            name="olt"
-            value={formData.olt}
-            onChange={handleInputChange}
-            placeholder="OLT"
-          />
-        </div>
+      )}
+
+      <div>
+        <Label htmlFor="olt">OLT</Label>
+        <Input
+          id="olt"
+          name="olt"
+          value={formData.olt}
+          onChange={handleInputChange}
+          placeholder="Selecione a OLT"
+        />
       </div>
 
       <div>
-        <Label htmlFor="pppoe">PPPoE</Label>
+        <Label htmlFor="cto">CTO</Label>
         <Input
-          id="pppoe"
-          name="pppoe"
-          value={formData.pppoe}
+          id="cto"
+          name="cto"
+          value={formData.cto}
           onChange={handleInputChange}
-          placeholder="Informação PPPoE"
+          placeholder="Identificação da CTO"
         />
       </div>
     </div>

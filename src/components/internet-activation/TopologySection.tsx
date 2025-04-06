@@ -37,22 +37,41 @@ const TopologySection: React.FC<TopologySectionProps> = ({
 }) => {
   const generateWifiNames = () => {
     if (!code) return null;
-    
+  
     const clientCode = code.split('-')[0] || code;
-    
+  
+    // Função para copiar o texto para a área de transferência
+    const copyToClipboard = (text) => {
+      navigator.clipboard.writeText(text).then(() => {
+      }).catch(err => {
+        console.error("Erro ao copiar texto: ", err);
+      });
+    };
+  
     return (
-      <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-gray-100 rounded-md">
+      <div className="grid grid-cols-2 gap-4 mt-2 p-3 bg-gray-700 rounded-md">
         <div>
           <Label>Rede 2.4GHz</Label>
-          <div className="font-medium">TELY_{clientCode}_2G</div>
+          <div 
+            className="font-medium cursor-pointer text-blue-400" 
+            onClick={() => copyToClipboard(`TELY_${clientCode}_2G`)}
+          >
+            TELY_{clientCode}_2G
+          </div>
         </div>
         <div>
           <Label>Rede 5GHz</Label>
-          <div className="font-medium">TELY_{clientCode}_5G</div>
+          <div 
+            className="font-medium cursor-pointer text-blue-400" 
+            onClick={() => copyToClipboard(`TELY_${clientCode}_5G`)}
+          >
+            TELY_{clientCode}_5G
+          </div>
         </div>
       </div>
     );
   };
+  
 
   return (
     <div className="space-y-4">
@@ -76,7 +95,7 @@ const TopologySection: React.FC<TopologySectionProps> = ({
           </Select>
         </div>
         
-        {topology === 'SWITCH' && (
+        {/* {topology === 'SWITCH' && (
           <div>
             <Label htmlFor="switchModel">Modelo do Switch</Label>
             <Input
@@ -87,9 +106,9 @@ const TopologySection: React.FC<TopologySectionProps> = ({
               placeholder="Modelo do Switch"
             />
           </div>
-        )}
+        )} */}
         
-        {topology === 'ONT' && (
+        {/* {topology === 'ONT' && (
           <div>
             <Label htmlFor="ontModel">Modelo da ONT</Label>
             <Input
@@ -100,7 +119,7 @@ const TopologySection: React.FC<TopologySectionProps> = ({
               placeholder="Modelo da ONT"
             />
           </div>
-        )}
+        )} */}
       </div>
 
       {topology === 'ONT' && (

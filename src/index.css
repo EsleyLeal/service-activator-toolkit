@@ -82,11 +82,34 @@
   }
 }
 
+/* Se você quiser manter as antigas, pode deixá-las */
 .signal-good {
   @apply text-[hsl(var(--green-fiber))] font-bold;
 }
 
 .signal-bad {
+  @apply text-[hsl(var(--red-fiber))] font-bold;
+}
+
+/* Agora, as novas classes para as 4 faixas: */
+.signal-excelente {
+  @apply text-[hsl(var(--green-fiber))] font-bold;
+}
+
+.signal-aceitavel {
+  /* Se tiver um --yellow-fiber, use-o: */
+  @apply text-yellow-500 font-bold; 
+  /* ou @apply text-[hsl(var(--yellow-fiber))] font-bold; */
+}
+
+.signal-margem {
+  /* Pode ser laranja ou algo intermediário */
+  @apply text-orange-500 font-bold;
+  /* ou @apply text-[hsl(var(--orange-fiber))] font-bold; */
+}
+
+.signal-problem {
+  /* A cor de problema pode ser vermelho novamente */
   @apply text-[hsl(var(--red-fiber))] font-bold;
 }
 

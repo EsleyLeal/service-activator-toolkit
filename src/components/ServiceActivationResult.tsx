@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ServiceActivationFormData } from '@/types';
-import { ArrowUp, Check, Copy } from 'lucide-react';
+import { ArrowUp, Check, Copy, Download } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import electron from 'electron/electron';
 
 interface ServiceActivationResultProps {
   formData: ServiceActivationFormData;
@@ -13,16 +14,17 @@ interface ServiceActivationResultProps {
 
 const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
   formData,
-  resetForm
+  resetForm,
 }) => {
   const { toast } = useToast();
+  const [sessionContent, setSessionContent] = useState<string>('');
 
   const getSignalClass = () => {
     const signal = parseFloat(formData.signalStrength);
     if (!formData.signalStrength || isNaN(signal)) {
-      return "";
+      return '';
     }
-    return (signal >= -15 && signal <= 27) ? "signal-good" : "signal-bad";
+    return signal >= -15 && signal <= 27 ? 'signal-good' : 'signal-bad';
   };
 
   const copyToClipboard = () => {
@@ -31,26 +33,80 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
       const textToCopy = resultDiv.innerText;
       navigator.clipboard.writeText(textToCopy).then(() => {
         toast({
-          title: "Copiado!",
-          description: "Informações copiadas para a área de transferência.",
+          title: 'Copiado!',
+          description: 'Informações copiadas para a área de transferência.',
         });
       });
     }
   };
 
+// Função para realizar o download do conteúdo, com base na data
+const downloadContent = () => {
+  const resultDiv = document.getElementById('result-content'); // Pega o conteúdo da div
+  if (resultDiv) {
+    const textToDownload = resultDiv.innerText; // Obtém o conteúdo da div como texto
+
+    // Recupera a data atual (no formato YYYY-MM-DD)
+    const currentDate = new Date();
+
+    // Formata a data para o formato "DD/MM/YYYY"
+    const formattedDate = currentDate.toLocaleDateString('pt-BR'); // "06/04/2025"
+
+    // Recupera o conteúdo salvo do 'localStorage' (se houver)
+    const savedContent = localStorage.getItem('savedContent') || '';
+    const lastSavedDate = localStorage.getItem('lastSavedDate'); // Data da última vez que o conteúdo foi salvo
+
+    // Se for o mesmo dia, adiciona o novo conteúdo ao conteúdo existente
+    let combinedContent = '';
+    if (lastSavedDate === formattedDate) {
+      combinedContent = `${savedContent}\n=============================\n${textToDownload}`;
+    } else {
+      // Se for um novo dia, reinicia com a data atual e o conteúdo
+      combinedContent = `${formattedDate}\n=============================\n${textToDownload}`;
+    }
+
+    // Cria um Blob (objeto que representa os dados) com o conteúdo combinado
+    const blob = new Blob([combinedContent], { type: 'text/plain;charset=utf-8' });
+
+    // Cria um link temporário para fazer o download
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob); // Cria um URL para o Blob
+
+    // Define o nome do arquivo com "DATA ATUAL: DD/MM/YYYY"
+    link.download = `DATA ATUAL: ${formattedDate}.txt`; // Define o nome do arquivo com a data formatada
+
+    // Simula o clique no link para iniciar o download
+    link.click();
+
+    // Atualiza o 'localStorage' com o novo conteúdo e a data da última atualização
+    localStorage.setItem('savedContent', combinedContent);
+    localStorage.setItem('lastSavedDate', formattedDate);
+  }
+};
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  const day = String(currentDate.getDate()).padStart(2, '0'); // Pega o dia e adiciona zero à esquerda, se necessário
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Pega o mês (0-11), então somamos 1
+  const year = currentDate.getFullYear(); // Pega o ano completo
+
+  // Retorna a data formatada: DD/MM/YYYY
+  return `${day}/${month}/${year}`;
+};
+
+
   const renderInternetActivation = () => (
     <div id="result-content" className="whitespace-pre-line text-left">
-      <p className="font-bold text-center mb-4">ATIVAÇÃO INTERNET REALIZADA COM SUCESSO</p>
+      <p className="font-bold text-center mb-4">ATIVAÇÃO INTERNET REALIZADA COM SUCESSO!</p>
       <p>CLIENTE - {formData.client}</p>
       <p>TECNICO - {formData.technician}</p>
       <p>CÓDIGO - {formData.code}</p>
       <p>FHTT - {formData.fhtt}</p>
       <p>PATRIMONIO - {formData.patrimony}</p>
       <p>TOPOLOGIA - {formData.topology}</p>
-      {formData.topology === 'SWITCH' && <p>MODELO SWITCH - {formData.switchModel}</p>}
       {formData.topology === 'ONT' && (
         <>
-          <p>MODELO ONT - {formData.ontModel}</p>
+          {/* <p>MODELO ONT - {formData.ontModel}</p> */}
           <p>SENHA WIFI - {formData.wifiPassword}</p>
           <p>REDE 2.4GHz - TELY_{formData.code.split('-')[0] || formData.code}_2G</p>
           <p>REDE 5GHz - TELY_{formData.code.split('-')[0] || formData.code}_5G</p>
@@ -65,7 +121,7 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
 
   const renderDatacom = () => (
     <div id="result-content" className="whitespace-pre-line text-left">
-      <p className="font-bold text-center mb-4">DATACOM</p>
+      <p className="font-bold text-center mb-4">DATACOM REALIZADA COM SUCESSO!</p>
       <p>Nome Cliente - {formData.client}</p>
       <p>SN: {formData.snNumber}</p>
       <p>DataCom UserName: {formData.datacomUsername}</p>
@@ -86,10 +142,11 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
     
     return (
       <div id="result-content" className="whitespace-pre-line text-left">
-        <p className="font-bold text-center mb-4">ATIVAÇÃO DE TELEFONIA</p>
-        <p>NUMERO ATRIBUIDO - {phoneDisplay} NOVO</p>
+        <p className="font-bold text-center mb-4">ATIVAÇÃO DE TELEFONIA REALIZADA COM SUCESSO!</p>
+        <p>NUMERO ATRIBUIDO - {phoneDisplay}</p>
         <p>SENHA SIPULSE - {formData.sipPassword}</p>
-        <p>SIPSERVER - sip:{phoneDisplay}@{sipIp}</p>
+        <p>SIPSERVER - sip:{phoneDisplay}@172.31.2.18</p>
+        <p>INDEX - {formData.indexValue}</p>
         {formData.sipIp && <p>IP - {formData.sipIp}</p>}
       </div>
     );
@@ -100,8 +157,9 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
     const ponNumbers = Object.keys(ponSlots).sort((a, b) => parseInt(a) - parseInt(b));
     
     return (
+      
       <div id="result-content" className="whitespace-pre-line text-left">
-        <p className="font-bold text-center mb-4">VERIFICAÇÃO CTO</p>
+        <p className="font-bold text-center mb-4">VERIFICAÇÃO CTO REALIZADA COM SUCESSO!</p>
         <p>TECNICO - {formData.technician}</p>
         <p>OLT - {formData.olt}</p>
         <p>CTO - {formData.cto}</p>
@@ -141,27 +199,84 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
   };
 
   const renderEquipmentChange = () => (
+  <div id="result-content" className="whitespace-pre-line text-left">
+    <p className="font-bold text-center mb-4">MUDANÇA DE EQUIPAMENTO REALIZADA COM SUCESSO!</p>
+    <p>CLIENTE - {formData.client}</p>
+    <p>TECNICO - {formData.technician}</p>
+    <p>CÓDIGO - {formData.code}</p>
+
+    {/* Condicionais para renderizar FHTT e Patrimônio conforme o tipo de mudança */}
+    {formData.changeType === 'fhtt' || formData.changeType === 'fhtt-patrimony' ? (
+      <>
+        <p>FHTT ANTIGO - {formData.fhtt}</p>
+        <p>FHTT NOVO - {formData.fhttNew}</p>
+      </>
+    ) : null}
+
+    {formData.changeType === 'fhtt-patrimony' || formData.changeType === 'patrimony' ? (
+      <p>PATRIMONIO - {formData.patrimony}</p>
+    ) : null}
+
+    <p>TOPOLOGIA - {formData.topology}</p>
+    <p>OLT - {formData.olt}</p>
+
+    {/* Exibição das redes e senha wifi apenas se a topologia for 'ONT' */}
+    {formData.topology === 'ONT' && (
+      <>
+        <p>SENHA WIFI - {formData.wifiPassword}</p>
+        <p>REDE 2.4GHz - TELY_{formData.code.split('-')[0] || formData.code}_2G</p>
+        <p>REDE 5GHz - TELY_{formData.code.split('-')[0] || formData.code}_5G</p>
+      </>
+    )}
+  </div>
+);
+
+
+  const renderEquipamentMigration = () => (
     <div id="result-content" className="whitespace-pre-line text-left">
-      <p className="font-bold text-center mb-4">MUDANÇA DE EQUIPAMENTO</p>
+      <p className="font-bold text-center mb-4">MIGRAÇÃO REALIZADA COM SUCESSO!</p>
       <p>CLIENTE - {formData.client}</p>
       <p>TECNICO - {formData.technician}</p>
       <p>CÓDIGO - {formData.code}</p>
-      <p>FHTT ANTIGO - {formData.fhtt}</p>
-      <p>FHTT NOVO - {formData.fhttNew}</p>
-      <p>PATRIMONIO - {formData.patrimony}</p>
-      <p>TOPOLOGIA - {formData.topology}</p>
-      <p>OLT - {formData.olt}</p>
+      <p>FHTT - {formData.fhtt}</p>
       <p>CTO - {formData.cto}</p>
-      <p>PPOE - {formData.pppoe}</p>
-      {formData.topology === 'ONT' && (
-        <>
-          <p>SENHA WIFI - {formData.wifiPassword}</p>
-          <p>REDE 2.4GHz - TELY_{formData.code.split('-')[0] || formData.code}_2G</p>
-          <p>REDE 5GHz - TELY_{formData.code.split('-')[0] || formData.code}_5G</p>
-        </>
-      )}
+      <p>OLT - {formData.olt}</p>
     </div>
   );
+
+  const renderOwnershipChange = () => (
+    <div id="result-content" className="whitespace-pre-line text-left">
+      <p className="font-bold text-center mb-4">TROCA DE TITULARIDADE REALIZADA COM SUCESSO!</p>
+      <p>ANTIGO TITULAR - {formData.client}</p>
+      <p>PPPoE - {formData.pppoe}</p>
+      <p>CHAMADO - {formData.called}</p>
+      <p>ABERTO POR - {formData.openBy}</p>
+      <p>NOVO TITULAR - {formData.newHolder}</p>
+      <p>CPF | CNPJ - {formData.identity}</p>
+      <p>FHTT - {formData.fhtt}</p>
+    </div>
+  );
+
+  const renderAddressChange = () => (
+    <div id="result-content" className="whitespace-pre-line text-left">
+      <p className="font-bold text-center mb-4">MUDANÇA DE ENDEREÇO REALIZADA COM SUCESSO!</p>
+      <p>CLIENTE - {formData.client}</p>
+      <p>TECNICO - {formData.technician}</p>
+      <p>FHTT - {formData.fhtt}</p>
+      
+      {/* Renderização condicional do parágrafo de Patrimônio */}
+      {formData.patrimony && formData.patrimony.trim() !== "" && (
+        <p>PATRIMÔNIO - {formData.patrimony}</p>
+      )}
+  
+      <p>TOPOLOGIA - {formData.topology}</p>
+      <p>OLT - {formData.olt}</p>
+      <p>NOVA CTO - {formData.cto}</p>
+    </div>
+  );
+  
+
+
 
   const FIBER_COLORS = [
     { name: 'Azul', class: 'blue-fiber' },
@@ -177,6 +292,7 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
     { name: 'Rosa', class: 'pink-fiber' },
     { name: 'Aqua', class: 'aqua-fiber' }
   ];
+  
 
   const renderResult = () => {
     switch (formData.serviceType) {
@@ -190,6 +306,12 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
         return renderCTOVerification();
       case 'equipment-change':
         return renderEquipmentChange();
+        case 'server-migration':
+          return renderEquipamentMigration();
+        case 'ownership-change':
+          return renderOwnershipChange();
+        case 'address-change':
+          return renderAddressChange();
       // Add other cases here based on service type
       default:
         return (
@@ -209,7 +331,7 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="bg-gray-100 p-4 rounded-md mb-6">
+        <div className="bg-gray-700 p-4 rounded-md mb-6">
           {renderResult()}
         </div>
         
@@ -218,9 +340,10 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
             variant="outline" 
             onClick={resetForm}
             className="flex items-center gap-2"
+            title="Ao clicar em 'Nova ativação', você inicia um novo suporte. Garanta que este suporte foi copiado."
           >
             <ArrowUp size={16} />
-            Voltar
+            Nova ativação
           </Button>
           
           <Button 
@@ -230,6 +353,11 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
             <Copy size={16} />
             Copiar para Área de Transferência
           </Button>
+
+          <Button onClick={downloadContent} className="flex items-center gap-2">
+              <Download size={16} />
+              Baixar Resultado
+            </Button>
         </div>
       </CardContent>
     </Card>
