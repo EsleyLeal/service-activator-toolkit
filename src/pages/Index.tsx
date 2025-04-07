@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ServiceActivationForm from '@/components/ServiceActivationForm';
 import slogans from '@/data/slogans';
+import { MacLookup } from '@/components/MacLookup';
 
 
 const Index = () => {
@@ -60,7 +61,7 @@ const Index = () => {
         .violet-fiber { background-color: #9900cc; }
         .pink-fiber { background-color: #ff66cc; }
         .aqua-fiber { background-color: #00ffff; }
-      `}</style>
+        `}</style>
 
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-center items-start">
         <div className="w-full md:w-[380px]">
@@ -74,7 +75,6 @@ const Index = () => {
           >
             Carregando...
           </iframe>
-
           <button
             className="mt-8 px-4 py-2 bg-blue-500 text-white rounded"
             onClick={() => setIsDarkMode(prev => !prev)}
@@ -85,6 +85,10 @@ const Index = () => {
 
         <div className="md:flex-1 w-full max-w-[800px]">
           <ServiceActivationForm />
+        </div>
+        {/* Nessa Opção, fica tudo do lado direito */}
+        <div className="mt-8">
+        <MacLookup />
         </div>
       </div>
       {/* FOOTER */}
