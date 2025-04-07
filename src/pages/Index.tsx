@@ -19,19 +19,23 @@ const Index = () => {
 
 
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * slogans.length);
-    setSlogan(slogans[randomIndex]);
+    let currentIndex = -1;
+  
+    const updateSlogan = () => {
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * slogans.length);
+      } while (newIndex === currentIndex);
+      currentIndex = newIndex;
+      setSlogan(slogans[newIndex]);
+    };
+  
+    updateSlogan(); // Define um logo ao carregar
+    const interval = setInterval(updateSlogan, 180000);
+  
+    return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      localStorage.setItem('theme', 'dark');
-      document.documentElement.classList.add('dark');
-    } else {
-      localStorage.setItem('theme', 'light');
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
+  
 
   return (
     <div className={`min-h-screen py-8 px-4 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
