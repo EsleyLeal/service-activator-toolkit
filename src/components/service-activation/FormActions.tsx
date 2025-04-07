@@ -26,8 +26,9 @@ const FormActions: React.FC<FormActionsProps> = ({
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button type="button" variant="outline">
-            Limpar
+            Limpar 
           </Button>
+          
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -38,7 +39,8 @@ const FormActions: React.FC<FormActionsProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={onReset}>Confirmar</AlertDialogAction>
+            <AlertDialogAction onClick={onReset} >Confirmar</AlertDialogAction>
+            
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

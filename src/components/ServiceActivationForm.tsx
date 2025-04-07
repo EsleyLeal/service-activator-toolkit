@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
@@ -9,7 +8,6 @@ import FormContentSelector from './service-activation/FormContentSelector';
 import FormActions from './service-activation/FormActions';
 import { OLT_OPTIONS, TOPOLOGY_OPTIONS } from '@/constants/serviceOptions';
 
-
 const ServiceActivationForm: React.FC = () => {
   const {
     formData,
@@ -19,7 +17,8 @@ const ServiceActivationForm: React.FC = () => {
     handleGenerateSipPassword,
     handleGenerateWifiPassword,
     handleSubmit,
-    resetForm
+    resetForm,
+    resetPorts, // <- vindo do hook!
   } = useServiceActivationForm();
 
   if (showResults) {
@@ -31,6 +30,11 @@ const ServiceActivationForm: React.FC = () => {
     );
   }
 
+  const handleFullReset = () => {
+    resetPorts();
+    resetForm();
+  };
+
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg">
       <CardHeader className="bg-blue-600 text-white">
@@ -41,7 +45,7 @@ const ServiceActivationForm: React.FC = () => {
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit}>
           <Tabs
-            value={formData.serviceType} // 👈 controlado!
+            value={formData.serviceType}
             onValueChange={(value) => handleSelectChange('serviceType', value)}
             className="w-full mb-6"
           >
@@ -49,7 +53,7 @@ const ServiceActivationForm: React.FC = () => {
               currentServiceType={formData.serviceType} 
               onServiceTypeChange={(value) => handleSelectChange('serviceType', value)} 
             />
-  
+
             <TabsContent value={formData.serviceType}>
               <FormContentSelector 
                 serviceType={formData.serviceType}
@@ -63,14 +67,17 @@ const ServiceActivationForm: React.FC = () => {
               />
             </TabsContent>
           </Tabs>
-  
+
           <FormActions 
-            onReset={resetForm}
+            onReset={() => {
+              resetPorts();
+              resetForm();
+            }}
           />
         </form>
       </CardContent>
     </Card>
   );
-};  
+};
 
 export default ServiceActivationForm;

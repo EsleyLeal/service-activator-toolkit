@@ -46,7 +46,9 @@ export const useServiceActivationForm = () => {
   managementIP: '',
   snNumber: '',
   datacomUsername: '',
-  datacomPassword: ''
+  datacomPassword: '',
+  clienteNaPorta: '',
+ 
   });
 
   const [showResults, setShowResults] = useState(false);
@@ -204,18 +206,25 @@ export const useServiceActivationForm = () => {
       fiber: '',
       managementIP: '',
       snNumber: '',
-      datacomUsername: '',
-      datacomPassword: ''
+      clienteNaPorta: '',
+      
     }));
     setShowResults(false);
+    
   };
-  
-  
 
   
   
   
-  
+  const resetPorts = () => {
+    setFormData(prev => ({
+      ...prev,
+      ponSlots: {},
+      portCount: '',
+      oltVendor: '',
+      ctoType: '',
+    }));
+  };
 
   return {
     formData,
@@ -225,6 +234,7 @@ export const useServiceActivationForm = () => {
     handleGenerateSipPassword,
     handleGenerateWifiPassword,
     handleSubmit,
-    resetForm
+    resetForm,
+    resetPorts // <- aqui! ✨
   };
 };

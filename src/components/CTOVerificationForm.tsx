@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import FormActions from '@/components/service-activation/FormActions';
 import { 
   Select, 
   SelectContent, 
@@ -23,6 +24,7 @@ interface CTOVerificationFormProps {
   onPonOutsideChange: (outside: string[]) => void;
   resetForm: () => void;
 }
+
 
 const FIBER_COLORS = [
   { name: 'Azul', class: 'blue-fiber' },
@@ -58,20 +60,38 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
   const [canceledSlots, setCanceledSlots] = useState<string[]>([]);
   const [noCodeSlots, setNoCodeSlots] = useState<string[]>([]);
 
+  const resetPorts = () => {
+    setPonSlots({});
+    setCanceledSlots([]);
+    setNoCodeSlots([]);
+    // Se precisar resetar outros estados relacionados, inclua aqui
+  };
+  
+
   useEffect(() => {
-    const tipo = activeTab === 'slots' ? 'conectorizada' : 'fusionada';
-    handleSelectChange('ctoType', tipo);
-  }, [activeTab]);
+    if (
+      Object.keys(formData.ponSlots).length === 0 &&
+      formData.portCount === '' &&
+      formData.oltVendor === '' &&
+      formData.ctoType === ''
+    ) {
+      // Quando detectar um reset no formData
+      setPonSlots({});
+      setCanceledSlots([]);
+      setNoCodeSlots([]);
+    }
+  }, [formData.ponSlots, formData.portCount, formData.oltVendor, formData.ctoType]);
 
   const handlePonSlotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const slotNumber = name.replace('pon-slot-', '');
     setPonSlots(prev => {
-      const newSlots = { ...prev, [slotNumber]: value };
-      onPonSlotsChange(newSlots);
-      return newSlots;
+      const updated = { ...prev, [slotNumber]: value };
+      onPonSlotsChange(updated); // comunica com o componente pai
+      return updated;
     });
   };
+  
 
   const handlePortCountChange = (value: "8" | "16") => {
     setPortCount(value);
@@ -257,10 +277,14 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
           </div>
 
           {Array.from({ length: parseInt(portCount, 10) }, (_, i) => i + 1).map(num => {
-            const numStr = num.toString();
-            const value = ponSlots[numStr] || '';
-            const isCanceled = canceledSlots.includes(numStr);
-            const isNoCode = noCodeSlots.includes(numStr);
+  const numStr = num.toString();
+  const value = ponSlots[numStr] || '';
+
+  const isCanceled = canceledSlots.includes(numStr);
+  const isNoCode = noCodeSlots.includes(numStr);
+
+
+            
 
             return (
               <div key={`slot-${num}`} className="flex flex-col md:flex-row items-start md:items-center gap-2 mb-2">
@@ -270,8 +294,7 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
                     id={`pon-slot-${num}`}
                     name={`pon-slot-${num}`}
                     value={value}
-                    onChange={handlePonSlotChange}
-                    
+                    onChange={handlePonSlotChange}                   
                     placeholder={`Cliente na porta ${num}`}
                     className="flex-1"
                   />
@@ -288,9 +311,11 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
                     checked={isNoCode}
                     onCheckedChange={() => toggleNoCode(numStr)}
                   />
+                  
                   <Label htmlFor={`semcodigo-${num}`}>SC</Label>
                 </div>
               </div>
+              
             );
           })}
       </TabsContent>

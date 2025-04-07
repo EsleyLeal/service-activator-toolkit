@@ -44,6 +44,7 @@ export interface ServiceActivationFormData {
   snNumber?: string;
   datacomUsername?: string;
   datacomPassword?: string;
+  clienteNaPorta: string;
 }
 
 export type OLTOption = {
@@ -53,3 +54,4 @@ export type OLTOption = {
 };
 
 export type TopologyOption = 'ONU + ROTEADOR' | 'SWITCH' | 'ONT';
+
