@@ -9,11 +9,13 @@ import electron from 'electron/electron';
 
 interface ServiceActivationResultProps {
   formData: ServiceActivationFormData;
+  ctoType?: 'conectorizada' | 'fusionada'; 
   resetForm: () => void;
 }
 
 const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
   formData,
+  
   resetForm,
 }) => {
   const { toast } = useToast();
@@ -124,8 +126,8 @@ const getCurrentDate = () => {
       <p className="font-bold text-center mb-4">DATACOM REALIZADA COM SUCESSO!</p>
       <p>Nome Cliente - {formData.client}</p>
       <p>SN: {formData.snNumber}</p>
-      <p>DataCom UserName: {formData.datacomUsername}</p>
-      <p>Senha: {formData.datacomPassword}</p>
+      <p>UserName: {formData.datacomUsername}</p>
+      <p>Password: {formData.datacomPassword}</p>
       <p>Patrimonio: {formData.patrimony}</p>
       <p>PPPOE - {formData.pppoe}</p>
       <p>Local - {formData.location}</p>
@@ -152,51 +154,77 @@ const getCurrentDate = () => {
     );
   };
 
-  const renderCTOVerification = () => {
-    const ponSlots = formData.ponSlots || {};
-    const ponNumbers = Object.keys(ponSlots).sort((a, b) => parseInt(a) - parseInt(b));
-    
+  const renderCTOConectorizada = () => {
+    let ponSlots: { [key: string]: string } = {};
+  
+    try {
+      ponSlots = typeof formData.ponSlots === 'string'
+        ? JSON.parse(formData.ponSlots)
+        : formData.ponSlots || {};
+    } catch (e) {
+      ponSlots = {};
+    }
+  
+    const totalPorts = parseInt(formData.portCount || "8", 10);
+    const ponNumbers = Array.from({ length: totalPorts }, (_, i) => (i + 1).toString());
+  
     return (
-      
       <div id="result-content" className="whitespace-pre-line text-left">
-        <p className="font-bold text-center mb-4">VERIFICAÇÃO CTO REALIZADA COM SUCESSO!</p>
+        <p className="font-bold text-center mb-4">VERIFICAÇÃO CTO CONECTORIZADA REALIZADA COM SUCESSO!</p>
+        <p>TECNICO - {formData.technician}</p>
+        <p>OLT - {formData.olt}</p>
+        <p>CTO - {formData.cto}</p>
+        <p>RUA - {formData.streetAddress}</p>
+        <p>PONTO DE REFERENCIA - {formData.referencePoint}</p>
+  
+        {formData.oltVendor === 'HAWUEI' && (
+          <p>FRAME - {formData.frame}</p>
+        )}
+  
+        <p>SLOT - {formData.slot}</p>
+        <p>PON - {formData.pon}</p>
+        
+  
+        {ponNumbers.map(num => (
+          <p key={num}>{num} - {ponSlots[num] || ''}</p>
+        ))}
+      </div>
+    );
+  };
+  
+  
+  
+  const renderCTOFusionada = () => {
+    return (
+      <div id="result-content" className="whitespace-pre-line text-left">
+        <p className="font-bold text-center mb-4">VERIFICAÇÃO CTO FUSIONADA REALIZADA COM SUCESSO!</p>
         <p>TECNICO - {formData.technician}</p>
         <p>OLT - {formData.olt}</p>
         <p>CTO - {formData.cto}</p>
         <p>RUA - {formData.streetAddress}</p>
         <p>PONTO DE REFERENCIA - {formData.referencePoint}</p>
         <p>SLOT - {formData.slot} PON - {formData.pon}</p>
-        
-        {ponNumbers.map(num => (
-          <p key={`result-pon-${num}`}>
-            {num} - {ponSlots[num]}
-            {formData.ponOutside?.includes(num) && " (FORA NA PON)"}
-          </p>
-        ))}
-        
-        {formData.ponOutside && formData.ponOutside.length > 0 && (
-          <p className="mt-2 font-semibold">FORA NA PON</p>
-        )}
-        
-        {formData.fiberFusion && formData.fiberFusion.length > 0 && (
-          <div className="mt-4">
-            <p className="font-semibold mb-2">FUSÃO DE FIBRAS:</p>
-            <div className="flex flex-wrap gap-2">
-              {formData.fiberFusion.map(color => {
-                const fiberClass = FIBER_COLORS.find(f => f.name === color)?.class || '';
-                return (
-                  <div key={`fiber-${color}`} className="fiber-row-fusion">
-                    <div className={`fiber-color ${fiberClass}`}></div>
-                    <span>{color}</span>
-                  </div>
-                );
-              })}
-            </div>
+  
+        <div className="mt-4">
+          <p className="font-semibold mb-2">FUSÃO DE FIBRAS:</p>
+          <div className="flex flex-wrap gap-2">
+            {formData.fiberFusion?.map(color => {
+              const fiberClass = FIBER_COLORS.find(f => f.name === color)?.class || '';
+              return (
+                <div key={`fiber-${color}`} className="fiber-row-fusion">
+                  <div className={`fiber-color ${fiberClass}`}></div>
+                  <span>{color}</span>
+                </div>
+              );
+            })}
           </div>
-        )}
+        </div>
       </div>
     );
   };
+  
+  
+  
 
   const renderEquipmentChange = () => (
   <div id="result-content" className="whitespace-pre-line text-left">
@@ -302,8 +330,11 @@ const getCurrentDate = () => {
         return renderDatacom();
       case 'telephony-activation':
         return renderTelephony();
-      case 'cto-verification':
-        return renderCTOVerification();
+        case 'cto-verification':
+  return formData.ctoType === 'fusionada'
+    ? renderCTOFusionada()
+    : renderCTOConectorizada();
+
       case 'equipment-change':
         return renderEquipmentChange();
         case 'server-migration':

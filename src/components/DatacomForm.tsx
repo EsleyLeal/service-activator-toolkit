@@ -45,7 +45,7 @@ const DatacomForm: React.FC<DatacomFormProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="datacomUsername">DataCom UserName</Label>
+          <Label htmlFor="datacomUsername">UserName</Label>
           <Input
             id="datacomUsername"
             name="datacomUsername"
@@ -55,7 +55,7 @@ const DatacomForm: React.FC<DatacomFormProps> = ({
           />
         </div>
         <div>
-          <Label htmlFor="datacomPassword">Senha</Label>
+          <Label htmlFor="datacomPassword">Password</Label>
           <div className="flex gap-2">
             <Input
               id="datacomPassword"

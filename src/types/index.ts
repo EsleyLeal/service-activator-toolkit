@@ -12,6 +12,7 @@ export interface ServiceActivationFormData {
   ontModel?: string;
   wifiPassword?: string;
   cto: string;
+  ctoType: string;
   olt: string;
   pppoe: string;
   signalStrength: string;
@@ -27,9 +28,12 @@ export interface ServiceActivationFormData {
   newHolder: string;
   identity: string;
   changeType:string;
+  frame?: string;
   slot?: string;
   pon?: string;
   fiberFusion?: string[];
+  oltVendor?: string;
+  portCount
   ponSlots?: {
     [key: string]: string;
   };

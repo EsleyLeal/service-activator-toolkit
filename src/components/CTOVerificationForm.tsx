@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
@@ -14,7 +13,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ServiceActivationFormData, OLTOption } from '@/types';
 
-
 interface CTOVerificationFormProps {
   formData: ServiceActivationFormData;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -23,6 +21,7 @@ interface CTOVerificationFormProps {
   onFusionChange: (fusions: string[]) => void;
   onPonSlotsChange: (slots: { [key: string]: string }) => void;
   onPonOutsideChange: (outside: string[]) => void;
+  resetForm: () => void;
 }
 
 const FIBER_COLORS = [
@@ -40,8 +39,6 @@ const FIBER_COLORS = [
   { name: 'Aqua', class: 'aqua-fiber' }
 ];
 
-
-
 const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
   formData,
   handleInputChange,
@@ -49,28 +46,26 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
   oltOptions,
   onFusionChange,
   onPonSlotsChange,
-  onPonOutsideChange
+  onPonOutsideChange,
+  resetForm,
 }) => {
   const [selectedFibers, setSelectedFibers] = useState<string[]>([]);
   const [ponSlots, setPonSlots] = useState<{ [key: string]: string }>({});
   const [ponOutside, setPonOutside] = useState<string[]>([]);
   const [portCount, setPortCount] = useState<"8" | "16">("8");
+  const [activeTab, setActiveTab] = useState<'slots' | 'fusion'>('slots');
+  const [oltVendor, setOltVendor] = useState<"HAWUEI" | "FIBERHOME" | "">("");
+  const [canceledSlots, setCanceledSlots] = useState<string[]>([]);
+  const [noCodeSlots, setNoCodeSlots] = useState<string[]>([]);
 
-  const handleFiberSelection = (color: string) => {
-    setSelectedFibers(prev => {
-      const newSelection = prev.includes(color) 
-        ? prev.filter(c => c !== color) 
-        : [...prev, color];
-      
-      onFusionChange(newSelection);
-      return newSelection;
-    });
-  };
+  useEffect(() => {
+    const tipo = activeTab === 'slots' ? 'conectorizada' : 'fusionada';
+    handleSelectChange('ctoType', tipo);
+  }, [activeTab]);
 
   const handlePonSlotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const slotNumber = name.replace('pon-slot-', '');
-    
     setPonSlots(prev => {
       const newSlots = { ...prev, [slotNumber]: value };
       onPonSlotsChange(newSlots);
@@ -78,19 +73,52 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
     });
   };
 
-  const handlePonOutsideChange = (slotNumber: string, checked: boolean) => {
-    setPonOutside(prev => {
-      const newOutside = checked 
-        ? [...prev, slotNumber]
-        : prev.filter(s => s !== slotNumber);
-      
-      onPonOutsideChange(newOutside);
-      return newOutside;
+  const handlePortCountChange = (value: "8" | "16") => {
+    setPortCount(value);
+    handleSelectChange('portCount', value);
+  };
+
+  const toggleCanceled = (slot: string) => {
+    setCanceledSlots(prev => {
+      const updated = prev.includes(slot)
+        ? prev.filter(s => s !== slot)
+        : [...prev, slot];
+
+      updateFinalValue(slot, updated.includes(slot), noCodeSlots.includes(slot));
+      return updated;
     });
   };
 
-  const handlePortCountChange = (value: "8" | "16") => {
-    setPortCount(value);
+  const toggleNoCode = (slot: string) => {
+    setNoCodeSlots(prev => {
+      const updated = prev.includes(slot)
+        ? prev.filter(s => s !== slot)
+        : [...prev, slot];
+
+      updateFinalValue(slot, canceledSlots.includes(slot), updated.includes(slot));
+      return updated;
+    });
+  };
+
+  const updateFinalValue = (slot: string, isCanceled: boolean, isNoCode: boolean) => {
+    const current = ponSlots[slot] || '';
+    const base = current
+      .replace(/^Validar porta com o responsável( - )?/, '')
+      .replace(/( - )?SEM CÓDIGO$/, '')
+      .trim();
+
+    const parts = [];
+    if (isCanceled) parts.push('Validar porta com o responsável');
+    if (base) parts.push(base);
+    if (isNoCode) parts.push('SEM CÓDIGO');
+
+    const finalValue = parts.join(' - ');
+
+    setPonSlots(prev => {
+      const updated = { ...prev, [slot]: finalValue };
+      onPonSlotsChange(updated);
+      return updated;
+    });
   };
 
   return (
@@ -149,50 +177,67 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
+        {/* Botão de escolha HAWUEI/FIBERHOME */}
         <div>
-          <Label htmlFor="referencePoint">Ponto de Referência</Label>
-          <Input
-            id="referencePoint"
-            name="referencePoint"
-            value={formData.referencePoint || ''}
-            onChange={handleInputChange}
-            placeholder="Ponto de referência próximo"
-          />
+          <Label className="mb-2 block">Fabricante da OLT</Label>
+          <RadioGroup 
+            className="flex gap-6" 
+            value={formData.oltVendor || ''} 
+            onValueChange={(val) => handleSelectChange("oltVendor", val)}
+          > 
+            <div className="flex items-center space-x-2" role="button">
+              <RadioGroupItem value="HAWUEI" id="hawuei" />
+              <Label htmlFor="hawuei">HAWUEI</Label>
+            </div>
+            <div className="flex items-center space-x-2" role="button">
+              <RadioGroupItem value="FIBERHOME" id="fiberhome" />
+              <Label htmlFor="fiberhome">FIBERHOME</Label>
+            </div>
+          </RadioGroup>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="slot">SLOT</Label>
-            <Input
-              id="slot"
-              name="slot"
-              value={formData.slot || ''}
-              onChange={handleInputChange}
-              placeholder="Número do slot"
-            />
+
+        {/* Campos dinâmicos baseados na escolha */}
+        {formData.oltVendor === 'HAWUEI' && (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="frame">FRAME</Label>
+              <Input id="frame" name="frame" value={formData.frame || ''} onChange={handleInputChange} placeholder="Número do frame" />
+            </div>
+            <div>
+              <Label htmlFor="slot">SLOT</Label>
+              <Input id="slot" name="slot" value={formData.slot || ''} onChange={handleInputChange} placeholder="Número do slot" />
+            </div>
+            <div>
+              <Label htmlFor="pon">PON</Label>
+              <Input id="pon" name="pon" value={formData.pon || ''} onChange={handleInputChange} placeholder="Número PON" />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="pon">PON</Label>
-            <Input
-              id="pon"
-              name="pon"
-              value={formData.pon || ''}
-              onChange={handleInputChange}
-              placeholder="Número PON"
-            />
+        )}
+
+        {formData.oltVendor === 'FIBERHOME' && (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="slot">SLOT</Label>
+              <Input id="slot" name="slot" value={formData.slot || ''} onChange={handleInputChange} placeholder="Número do slot" />
+            </div>
+            <div>
+              <Label htmlFor="pon">PON</Label>
+              <Input id="pon" name="pon" value={formData.pon || ''} onChange={handleInputChange} placeholder="Número PON" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      <Tabs defaultValue="slots" className="w-full mt-4">
+      <Tabs value={activeTab} onValueChange={(val) => setActiveTab(val as 'slots' | 'fusion')} className="w-full mt-4">
         <TabsList className="grid grid-cols-2">
-          <TabsTrigger value="slots">PON Slots</TabsTrigger>
+          <TabsTrigger value="slots">Conectoriza</TabsTrigger>
           <TabsTrigger value="fusion">Fusão de Fibras</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="slots" className="space-y-4 p-4 border rounded-md">
           <h3 className="font-medium text-lg mb-2">Preenchimento de PON</h3>
-          
+
           <div className="mb-4">
             <Label className="mb-2 block">Quantidade de Portas</Label>
             <RadioGroup 
@@ -210,59 +255,54 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
               </div>
             </RadioGroup>
           </div>
-          
-          {Array.from({ length: parseInt(portCount) }, (_, i) => i + 1).map(num => (
-            <div key={`slot-${num}`} className="flex items-center gap-4 mb-2">
-              <div className="w-6">{num} -</div>
-              <Input
-                id={`pon-slot-${num}`}
-                name={`pon-slot-${num}`}
-                value={ponSlots[num.toString()] || ''}
-                onChange={handlePonSlotChange}
-                placeholder={`Cliente na porta ${num}`}
-                className="flex-1"
-              />
-              <div className="flex items-center gap-2">
-                <Checkbox 
-                  id={`outside-${num}`}
-                  checked={ponOutside.includes(num.toString())}
-                  onCheckedChange={(checked) => 
-                    handlePonOutsideChange(num.toString(), checked as boolean)
-                  }
-                />
-                <Label htmlFor={`outside-${num}`} className="text-sm">
-                  Fora na PON
-                </Label>
+
+          {Array.from({ length: parseInt(portCount, 10) }, (_, i) => i + 1).map(num => {
+            const numStr = num.toString();
+            const value = ponSlots[numStr] || '';
+            const isCanceled = canceledSlots.includes(numStr);
+            const isNoCode = noCodeSlots.includes(numStr);
+
+            return (
+              <div key={`slot-${num}`} className="flex flex-col md:flex-row items-start md:items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 w-full">
+                  <div className="w-6">{num}</div>
+                  <Input
+                    id={`pon-slot-${num}`}
+                    name={`pon-slot-${num}`}
+                    value={value}
+                    onChange={handlePonSlotChange}
+                    
+                    placeholder={`Cliente na porta ${num}`}
+                    className="flex-1"
+                  />
+                </div>
+                <div className="flex gap-4 items-center  text-lg">
+                  <Checkbox
+                    id={`cancelado-${num}`}
+                    checked={isCanceled}
+                    onCheckedChange={() => toggleCanceled(numStr)}
+                  />
+                  <Label htmlFor={`cancelado-${num}`}>Cancelado</Label>
+                  <Checkbox
+                    id={`semcodigo-${num}`}
+                    checked={isNoCode}
+                    onCheckedChange={() => toggleNoCode(numStr)}
+                  />
+                  <Label htmlFor={`semcodigo-${num}`}>SC</Label>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+      </TabsContent>
+
+      <TabsContent value="fusion" className="p-4 border rounded-md">
+        <h3 className="font-medium text-lg mb-2">Fusão de Fibras</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Selecione as cores das fibras utilizadas na fusão
+        </p>
+   
         </TabsContent>
         
-        <TabsContent value="fusion" className="p-4 border rounded-md">
-          <h3 className="font-medium text-lg mb-2">Fusão de Fibras</h3>
-          <p className="text-sm text-gray-500 mb-4">
-            Selecione as cores das fibras utilizadas na fusão
-          </p>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {FIBER_COLORS.map(color => (
-              <div 
-                key={color.name}
-                className="fiber-row-fusion"
-              >
-                <Checkbox 
-                  id={`fiber-${color.name}`}
-                  checked={selectedFibers.includes(color.name)}
-                  onCheckedChange={() => handleFiberSelection(color.name)}
-                />
-                <div className={`fiber-color ${color.class}`}></div>
-                <Label htmlFor={`fiber-${color.name}`} className="ml-2 text-sm">
-                  {color.name}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </TabsContent>
       </Tabs>
     </div>
   );

@@ -1,5 +1,16 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction
+} from '@/components/ui/alert-dialog';
 
 interface FormActionsProps {
   onReset: () => void;
@@ -12,14 +23,30 @@ const FormActions: React.FC<FormActionsProps> = ({
 }) => {
   return (
     <div className="flex justify-end space-x-4 mt-6">
-      <Button type="button" variant="outline" onClick={onReset}>
-        Limpar
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button type="button" variant="outline">
+            Limpar
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Tem certeza que deseja limpar?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação apagará todos os dados preenchidos no formulário. Essa ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={onReset}>Confirmar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <Button type={onSubmit ? "button" : "submit"} onClick={onSubmit}>
         Gerar Informações
       </Button>
     </div>
-    
   );
 };
 

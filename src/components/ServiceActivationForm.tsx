@@ -9,6 +9,7 @@ import FormContentSelector from './service-activation/FormContentSelector';
 import FormActions from './service-activation/FormActions';
 import { OLT_OPTIONS, TOPOLOGY_OPTIONS } from '@/constants/serviceOptions';
 
+
 const ServiceActivationForm: React.FC = () => {
   const {
     formData,
@@ -39,14 +40,16 @@ const ServiceActivationForm: React.FC = () => {
       </CardHeader>
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit}>
-          <Tabs defaultValue="internet-activation" className="w-full mb-6"
+          <Tabs
+            value={formData.serviceType} // 👈 controlado!
             onValueChange={(value) => handleSelectChange('serviceType', value)}
+            className="w-full mb-6"
           >
             <ServiceTypeTabs 
               currentServiceType={formData.serviceType} 
               onServiceTypeChange={(value) => handleSelectChange('serviceType', value)} 
             />
-            
+  
             <TabsContent value={formData.serviceType}>
               <FormContentSelector 
                 serviceType={formData.serviceType}
@@ -60,7 +63,7 @@ const ServiceActivationForm: React.FC = () => {
               />
             </TabsContent>
           </Tabs>
-
+  
           <FormActions 
             onReset={resetForm}
           />
@@ -68,6 +71,6 @@ const ServiceActivationForm: React.FC = () => {
       </CardContent>
     </Card>
   );
-};
+};  
 
 export default ServiceActivationForm;

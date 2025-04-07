@@ -5,20 +5,48 @@ import { useToast } from '@/components/ui/use-toast';
 
 export const useServiceActivationForm = () => {
   const [formData, setFormData] = useState<ServiceActivationFormData>({
-    serviceType: 'internet-activation',
-    client: '',
-    technician: '',
-    code: '',
-    fhtt: '',
-    patrimony: '',
-    topology: 'ONU + ROTEADOR',
-    cto: '',
-    olt: '',
-    pppoe: '',
-    signalStrength: '',
-    ponSlots: {},
-    ponOutside: [],
-    fiberFusion: []
+  serviceType: 'internet-activation',
+  client: '',
+  technician: '',
+  code: '',
+  fhtt: '',
+  fhttNew: '',
+  patrimony: '',
+  topology: 'ONU + ROTEADOR',
+  switchModel: '',
+  ontModel: '',
+  wifiPassword: '',
+  cto: '',
+  ctoType: '',
+  olt: '',
+  pppoe: '',
+  signalStrength: '',
+  phoneNumber: '',
+  sipPassword: '',
+  sipServer: '',
+  sipIp: '',
+  indexValue: '',
+  streetAddress: '',
+  referencePoint: '',
+  called: '',
+  openBy: '',
+  newHolder: '',
+  identity: '',
+  changeType: '',
+  frame: '',
+  slot: '',
+  pon: '',
+  fiberFusion: [],
+  oltVendor: '',
+  portCount: '',
+  ponSlots: {},
+  ponOutside: [],
+  location: '',
+  fiber: '',
+  managementIP: '',
+  snNumber: '',
+  datacomUsername: '',
+  datacomPassword: ''
   });
 
   const [showResults, setShowResults] = useState(false);
@@ -132,26 +160,62 @@ export const useServiceActivationForm = () => {
       description: "Formulário processado com sucesso!",
     });
   };
+  
 
   const resetForm = () => {
-    setFormData({
-      serviceType: 'internet-activation',
+    setFormData(prev => ({
+      serviceType: prev.serviceType, // 🔁 mantém a aba ativa
       client: '',
       technician: '',
       code: '',
       fhtt: '',
+      fhttNew: '',
       patrimony: '',
       topology: 'ONU + ROTEADOR',
+      switchModel: '',
+      ontModel: '',
+      wifiPassword: '',
       cto: '',
+      ctoType: '',
       olt: '',
       pppoe: '',
       signalStrength: '',
+      phoneNumber: '',
+      sipPassword: '',
+      sipServer: '',
+      sipIp: '',
+      indexValue: '',
+      streetAddress: '',
+      referencePoint: '',
+      called: '',
+      openBy: '',
+      newHolder: '',
+      identity: '',
+      changeType: '',
+      frame: '',
+      slot: '',
+      pon: '',
+      fiberFusion: [],
+      oltVendor: '',
+      portCount: '',
       ponSlots: {},
       ponOutside: [],
-      fiberFusion: []
-    });
+      location: '',
+      fiber: '',
+      managementIP: '',
+      snNumber: '',
+      datacomUsername: '',
+      datacomPassword: ''
+    }));
     setShowResults(false);
   };
+  
+  
+
+  
+  
+  
+  
 
   return {
     formData,
