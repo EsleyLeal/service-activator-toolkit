@@ -16,6 +16,7 @@ const slogans: string[] = [
   "Tecnologia sem enrolação. Só conexão.",
   "Velocidade de verdade, sem drama.",
   "Não é mágica, é engenharia de rede.",
+  "Calma! Sou do suporte avançado e tenho acesso aos seus equipamentos",
   "Onde tem fibra, tem confiança.",
   "A rede que você esquece que existe – de tão boa.",
   "Internet raiz, confiável e veloz.",
