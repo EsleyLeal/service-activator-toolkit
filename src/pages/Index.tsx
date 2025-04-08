@@ -15,8 +15,23 @@ const Index = () => {
   const [slogan, setSlogan] = useState<string>('Toolkit de Ativação de Serviços');
 
   useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * slogans.length);
+    setSlogan(slogans[randomIndex]);
+  }, []);
+  
+  useEffect(() => {
+    if (isDarkMode) {
+      localStorage.setItem('theme', 'dark');
+      document.documentElement.classList.add('dark');
+    } else {
+      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+  
+  useEffect(() => {
     let currentIndex = -1;
-
+  
     const updateSlogan = () => {
       let newIndex;
       do {
@@ -25,11 +40,13 @@ const Index = () => {
       currentIndex = newIndex;
       setSlogan(slogans[newIndex]);
     };
-
-    updateSlogan();
-    const interval = setInterval(updateSlogan, 180000);
-    return () => clearInterval(interval);
-  }, []);
+  
+    updateSlogan(); // chama imediatamente na montagem
+  
+    const interval = setInterval(updateSlogan, 180000); // 3 minutos
+  
+    return () => clearInterval(interval); // limpa o intervalo ao desmontar
+  }, [slogans]);
 
   const copiarMensagem = (tipo: 'compatível' | 'incompatível') => {
     let mensagem = '';
