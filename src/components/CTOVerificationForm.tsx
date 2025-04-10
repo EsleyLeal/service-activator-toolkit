@@ -51,7 +51,7 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
   onPonOutsideChange,
   resetForm,
 }) => {
-  const [selectedFibers, setSelectedFibers] = useState<string[]>([]);
+  const [selectedFibers, setSelectedFibers] = useState<{ color: string, clientName: string }[]>([]);
   const [ponSlots, setPonSlots] = useState<{ [key: string]: string }>({});
   const [ponOutside, setPonOutside] = useState<string[]>([]);
   const [portCount, setPortCount] = useState<"8" | "16">("8");
@@ -59,12 +59,22 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
   const [oltVendor, setOltVendor] = useState<"HAWUEI" | "FIBERHOME" | "">("");
   const [canceledSlots, setCanceledSlots] = useState<string[]>([]);
   const [noCodeSlots, setNoCodeSlots] = useState<string[]>([]);
+  const [newFiber, setNewFiber] = useState({ color: '', clientName: '' });
 
   const resetPorts = () => {
     setPonSlots({});
     setCanceledSlots([]);
     setNoCodeSlots([]);
     // Se precisar resetar outros estados relacionados, inclua aqui
+  };
+
+  const handleAddFiber = () => {
+    if (newFiber.color && newFiber.clientName) {
+      setSelectedFibers([...selectedFibers, newFiber]);
+      setNewFiber({ color: '', clientName: '' }); // Reset the input fields
+    } else {
+      alert("Preencha todos os campos antes de adicionar.");
+    }
   };
   
 
@@ -184,6 +194,14 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
             onChange={handleInputChange}
             placeholder="Número da CTO"
           />
+          <Label htmlFor="referencePoint">Ponto de Referência</Label>
+          <Input
+            id="referencePoint"
+            name="referencePoint"
+            value={formData.referencePoint || ''}
+            onChange={handleInputChange}
+            placeholder="Endereço da CTO"
+          />
         </div>
         <div>
           <Label htmlFor="streetAddress">Rua</Label>
@@ -194,6 +212,7 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
             onChange={handleInputChange}
             placeholder="Endereço da CTO"
           />
+          
         </div>
       </div>
 
@@ -321,12 +340,62 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
       </TabsContent>
 
       <TabsContent value="fusion" className="p-4 border rounded-md">
-        <h3 className="font-medium text-lg mb-2">Fusão de Fibras</h3>
-        <p className="text-sm text-gray-500 mb-4">
-          Selecione as cores das fibras utilizadas na fusão
-        </p>
-   
-        </TabsContent>
+  <h3 className="font-medium text-lg mb-2">Fusão de Fibras</h3>
+  <p className="text-sm text-gray-500 mb-4">
+    Selecione as cores das fibras utilizadas na fusão
+  </p>
+  
+  {/* Campos para adicionar nova fibra */}
+  <div className="space-y-4">
+    <div>
+      <Label className="mb-2 block">Escolha a cor da fibra</Label>
+      <Select
+        value={newFiber.color}
+        onValueChange={(value) => setNewFiber({ ...newFiber, color: value })}
+      >
+        <SelectTrigger id="fiber-color">
+          <SelectValue placeholder="Selecione a cor da fibra" />
+        </SelectTrigger>
+        <SelectContent>
+          {FIBER_COLORS.map((fiber) => (
+            <SelectItem key={fiber.class} value={fiber.class}>
+              {fiber.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+
+    <div>
+      <Label className="mb-2 block">Nome do cliente</Label>
+      <Input
+        id="client-name"
+        value={newFiber.clientName}
+        onChange={(e) => setNewFiber({ ...newFiber, clientName: e.target.value })}
+        placeholder="Nome do cliente"
+      />
+    </div>
+
+    <button
+      className="btn btn-primary"
+      onClick={handleAddFiber}
+    >
+      Adicionar Fibra
+    </button>
+  </div>
+
+  {/* Listar as fibras adicionadas */}
+  <div className="mt-4">
+    <h4 className="font-medium text-lg mb-2">Fibras Selecionadas:</h4>
+    <ul>
+      {selectedFibers.map((fiber, index) => (
+        <li key={index} className="mb-2">
+          <span>{fiber.clientName} - {fiber.color}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</TabsContent>
         
       </Tabs>
     </div>
