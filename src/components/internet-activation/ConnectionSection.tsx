@@ -195,13 +195,20 @@ const getSignalClass = () => {
 
     {/* Campo PPPoE editável */}
     <Input
-      className="mt-2"
-      id="pppoe"
-      name="pppoe"
-      value={pppoeDisplay}
-      onChange={(e) => setPppoeDisplay(e.target.value)}
-      placeholder="Gerado automaticamente"
-    />
+  className="mt-2"
+  id="pppoe"
+  name="pppoe"
+  value={pppoeDisplay}
+  onChange={(e) => {
+    const newValue = e.target.value;
+    setPppoeDisplay(newValue);
+    handleInputChange({
+      target: { name: 'pppoe', value: newValue }
+    } as React.ChangeEvent<HTMLInputElement>);
+  }}
+  placeholder="Gerado automaticamente"
+/>
+
 
     {/* Botão para gerar a letra aleatória (só se tiver algo na primeira parte) */}
     <button
