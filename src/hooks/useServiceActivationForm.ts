@@ -55,27 +55,47 @@ export const useServiceActivationForm = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Se ambos os campos estiverem preenchidos, gera o PPPoE
     if (formData.client && formData.patrimony) {
-      const ignoreWords = ['de', 'do', 'da', 'das', 'dos', 'e']; // Adicione outras palavras que você deseja ignorar
-      const names = formData.client.split('-')[1]?.trim().split(' ') || [];
-      
-      if (names.length >= 2) {
-        // Filtra os nomes, removendo as palavras que não devem ser usadas
-        const filteredNames = names.filter(name => !ignoreWords.includes(name.toLowerCase()));
-
-        if (filteredNames.length >= 2) {
-          const firstName = filteredNames[0].toLowerCase();
-          const secondName = filteredNames[1].toLowerCase();
-          const pppoe1 = `${firstName}.${secondName}     ${firstName}${formData.patrimony}`;
-          
-          setFormData(prev => ({
-            ...prev,
-            pppoe: pppoe1
-          }));
+      let clientName = formData.client;
+  
+      // Se existir um hífen, separamos a string
+      if (clientName.includes('-')) {
+        const parts = clientName.split('-');
+        // Se a primeira parte for numérica ou vazia, descartamos e usamos o restante
+        if (parts[0].trim() === '' || /^\d+$/.test(parts[0].trim())) {
+          clientName = parts.slice(1).join('-').trim();
         }
       }
+  
+      const ignoreWords = ['de', 'do', 'da', 'das', 'dos', 'e']; // Palavras a serem ignoradas
+      const names = clientName.split(' ');
+      // Filtra nomes vazios e palavras indesejadas
+      const filteredNames = names.filter(
+        name => name.trim() !== '' && !ignoreWords.includes(name.toLowerCase())
+      );
+  
+      if (filteredNames.length > 0) {
+        const firstName = filteredNames[0].toLowerCase();
+        const secondName =
+          filteredNames.length >= 2 ? filteredNames[1].toLowerCase() : firstName;
+        const pppoe1 = `${firstName}.${secondName}     ${firstName}${formData.patrimony}`;
+        
+        setFormData(prev => ({
+          ...prev,
+          pppoe: pppoe1
+        }));
+      }
+    } else {
+      // Se algum dos campos estiver vazio, limpa o valor de pppoe
+      setFormData(prev => ({
+        ...prev,
+        pppoe: ""
+      }));
     }
   }, [formData.client, formData.patrimony]);
+  
+  
 
   useEffect(() => {
     if (formData.code) {

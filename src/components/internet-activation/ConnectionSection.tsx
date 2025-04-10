@@ -108,7 +108,7 @@ const getSignalClass = () => {
 
   // Divide o PPPoE em duas partes
   const pppoeParts = pppoe.split('     ');
-const [firstPart = '', secondPart = ''] = pppoeParts;
+  const [firstPart = '', secondPart = ''] = pppoeParts;
 
 
   // Função para gerar uma letra aleatória
