@@ -200,7 +200,7 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
             name="referencePoint"
             value={formData.referencePoint || ''}
             onChange={handleInputChange}
-            placeholder="Endereço da CTO"
+            placeholder="Ponto de Referência"
           />
         </div>
         <div>
@@ -212,7 +212,6 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
             onChange={handleInputChange}
             placeholder="Endereço da CTO"
           />
-          
         </div>
       </div>
 
