@@ -62,7 +62,7 @@ export const useServiceActivationForm = () => {
       // Se existir um hífen, separamos a string
       if (clientName.includes('-')) {
         const parts = clientName.split('-');
-        // Se a primeira parte for numérica ou vazia, descartamos e usamos o restante
+        // Se a primeira parte for numérica ou estiver vazia, descartamos e usamos o restante
         if (parts[0].trim() === '' || /^\d+$/.test(parts[0].trim())) {
           clientName = parts.slice(1).join('-').trim();
         }
@@ -76,9 +76,16 @@ export const useServiceActivationForm = () => {
       );
   
       if (filteredNames.length > 0) {
-        const firstName = filteredNames[0].toLowerCase();
+        // Função para remover todos os acentos
+        const removeAccents = (str: string) => {
+          return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        };
+  
+        const firstName = removeAccents(filteredNames[0]).toLowerCase();
         const secondName =
-          filteredNames.length >= 2 ? filteredNames[1].toLowerCase() : firstName;
+          filteredNames.length >= 2
+            ? removeAccents(filteredNames[1]).toLowerCase()
+            : firstName;
         const pppoe1 = `${firstName}.${secondName}     ${firstName}${formData.patrimony}`;
         
         setFormData(prev => ({
@@ -94,6 +101,7 @@ export const useServiceActivationForm = () => {
       }));
     }
   }, [formData.client, formData.patrimony]);
+  
   
   
 
