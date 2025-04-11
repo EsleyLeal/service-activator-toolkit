@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ServiceActivationForm from "@/components/ServiceActivationForm";
 import slogans from "@/data/slogans";
-import { MacLookup } from "@/components/MacLookup";
+// import { getVendorByMac } from "../utils/getVendorByMac";
+import { getVendorByMac } from "../utils/getVendorByMac";
 
 // Função para formatar o vendor: insere quebra de linha após 29 caracteres
 function formatVendor(text: string, limit: number = 30): string {
@@ -21,15 +22,16 @@ const Index = () => {
   });
 
   const [slogan, setSlogan] = useState<string>("Toolkit de Ativação de Serviços");
-
-  // Estado para o fabricante (vendor) vindo do MacLookup
   const [vendor, setVendor] = useState<string | null>(null);
+  const [mac, setMac] = useState<string>("");
 
+  // Atualiza o slogan aleatoriamente
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * slogans.length);
     setSlogan(slogans[randomIndex]);
   }, []);
 
+  // Atualiza o tema
   useEffect(() => {
     if (isDarkMode) {
       localStorage.setItem("theme", "dark");
@@ -40,9 +42,9 @@ const Index = () => {
     }
   }, [isDarkMode]);
 
+  // Atualiza o slogan periodicamente (a cada 3 minutos)
   useEffect(() => {
     let currentIndex = -1;
-
     const updateSlogan = () => {
       let newIndex;
       do {
@@ -51,28 +53,35 @@ const Index = () => {
       currentIndex = newIndex;
       setSlogan(slogans[newIndex]);
     };
-
-    updateSlogan(); // chama imediatamente na montagem
-    const interval = setInterval(updateSlogan, 180000); // 3 minutos
+    updateSlogan(); // Chama imediatamente na montagem
+    const interval = setInterval(updateSlogan, 180000);
     return () => clearInterval(interval);
   }, [slogans]);
+
+  // Atualiza o vendor automaticamente quando o MAC muda
+  useEffect(() => {
+    if (mac.trim() === "") {
+      setVendor(null);
+    } else if (mac.length >= 6) {
+      const result = getVendorByMac(mac);
+      setVendor(result);
+    }
+  }, [mac]);
 
   const copiarMensagem = (tipo: "compatível" | "incompatível") => {
     let mensagem = "";
     if (tipo === "compatível") {
       mensagem = "Equipamento compatível com o plano, não necessário a troca.";
-    } else if (tipo === "incompatível") {
+    } else {
       mensagem =
         "Equipamento não compatível com o plano, favor mandar um técnico ao local para realizar a troca do equipamento.";
     }
-    navigator.clipboard
-      .writeText(mensagem)
-      .then(() => {
-        console.log("Mensagem copiada com sucesso!");
-      })
-      .catch((err) => {
-        console.error("Erro ao copiar mensagem:", err);
-      });
+    navigator.clipboard.writeText(mensagem).catch(console.error);
+  };
+
+  const handleClear = () => {
+    setMac("");
+    setVendor(null);
   };
 
   return (
@@ -81,6 +90,7 @@ const Index = () => {
         isDarkMode ? "bg-gray-900" : "bg-gray-50"
       }`}
     >
+      {/* Cabeçalho */}
       <div className="mb-8 text-center">
         <h1
           className={`text-3xl font-bold ${
@@ -90,91 +100,33 @@ const Index = () => {
           {slogan}
         </h1>
         <p
-          className={`text-gray-600 mt-2 ${
-            isDarkMode ? "text-gray-300" : "text-gray-600"
-          }`}
+          className={`mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
         >
           Gerenciamento de ativações, mudanças e verificações da rede
         </p>
       </div>
 
-      <style>{`
-        .signal-good { color: green; font-weight: bold; }
-        .signal-bad { color: red; font-weight: bold; }
-        .fiber-color { width: 20px; height: 20px; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        .fiber-row-fusion { display: flex; align-items: center; margin-bottom: 8px; }
-        .blue-fiber { background-color: #0066cc; }
-        .orange-fiber { background-color: #ff9900; }
-        .green-fiber { background-color: #00cc66; }
-        .brown-fiber { background-color: #8B4513; }
-        .gray-fiber { background-color: #999999; }
-        .white-fiber { background-color: #ffffff; border: 1px solid #dddddd; }
-        .red-fiber { background-color: #ff3300; }
-        .black-fiber { background-color: #000000; }
-        .yellow-fiber { background-color: #ffff00; }
-        .violet-fiber { background-color: #9900cc; }
-        .pink-fiber { background-color: #ff66cc; }
-        .aqua-fiber { background-color: #00ffff; }
-      `}</style>
-
-      <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-center items-start">
-        <div className="w-full md:w-[380px]">
-          <iframe
-            className="w-full rounded shadow"
-            src="https://forms.office.com/pages/responsepage.aspx?id=ygWfal5nYk2aT_HMz7cu2ZBbvZkClzlDv_JDKnxdx_JUREE0SjlQNzdVRDNOWVk4WTNHSTNWSVRIRCQlQCN0PWcu"
-            height="730"
-            frameBorder="0"
-            marginHeight={0}
-            marginWidth={0}
-          >
-            Carregando...
-          </iframe>
-          <button
-            className="mt-8 px-4 py-2 bg-blue-500 text-white rounded"
-            onClick={() => setIsDarkMode((prev) => !prev)}
-          >
-            Toggle Dark Mode
-          </button>
-        </div>
-
-        <div className="md:flex-1 w-full max-w-[800px]">
-          <ServiceActivationForm />
-        </div>
-
-        {/* Suporte Avançado */}
-        <div className="text-center mt-8 p-4 border rounded-lg bg-white shadow dark:bg-gray-800 dark:border-gray-700">
-          {/* <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
-            Suporte Avançado
-          </h2> */}
-
-          {/* Componente MacLookup, que agora atualiza o estado vendor do pai */}
-          <MacLookup vendor={vendor} setVendor={setVendor} />
-
-          {/* Exibe o resultado do lookup fora do componente MacLookup,
-              separando em duas linhas se ultrapassar 29 caracteres */}
-          {vendor && (
-          <a
-            href={`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(vendor)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 text-green-700 dark:text-green-400 cursor-pointer"
-            style={{ whiteSpace: "pre-line" }}
-          >
-            <strong>{formatVendor(vendor, 29)}</strong>
-          </a>
-          )}
-          {vendor === null && vendor !== undefined && (
-            <p className="mt-4 text-red-600 dark:text-red-400">
-              Fabricante não encontrado.
-            </p>
-          )}
-
-          {/* Título Upgrade/Downgrade */}
-          <div className="mt-6">
-            <h3 className="text-md font-medium text-gray-800 dark:text-gray-100 mb-2">
+      {/* Layout com três colunas */}
+      <div className="flex flex-col md:flex-row gap-4 justify-center items-start">
+        {/* Coluna 1: Card de "ATIVAÇÃO VAREJO 2025" */}
+        <div className="w-full md:w-[380px] space-y-4">
+          <div className="p-1 border rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 shadow">
+            <iframe
+              className="w-full rounded shadow"
+              src="https://forms.office.com/pages/responsepage.aspx?id=ygWfal5nYk2aT_HMz7cu2ZBbvZkClzlDv_JDKnxdx_JUREE0SjlQNzdVRDNOWVk4WTNHSTNWSVRIRCQlQCN0PWcu"
+              height="730"
+              frameBorder="0"
+              marginHeight={0}
+              marginWidth={0}
+            >
+              Carregando...
+            </iframe>
+          </div>
+          {/* Botão para trocar o tema */}
+          <div className="p-4  rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 shadow">
+            <h2 className=" text-center text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
               Upgrade / Downgrade
-            </h3>
-            <br />
+            </h2>
             <div className="flex justify-center gap-4">
               <button
                 onClick={() => copiarMensagem("compatível")}
@@ -190,6 +142,75 @@ const Index = () => {
               </button>
             </div>
           </div>
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+            onClick={() => setIsDarkMode((prev) => !prev)}
+          >
+            Toggle Dark Mode
+          </button>
+        </div>
+
+        {/* Coluna 2: Formulário principal */}
+        <div className="md:flex-1 w-full max-w-[800px]">
+          <ServiceActivationForm />
+        </div>
+
+        {/* Coluna 3: Suporte Avançado */}
+        <div className="w-full md:w-[380px] space-y-4">
+          {/* Card com iframe para Tratativas */}
+          <div className="p-1 border rounded-lg bg-white dark:bg-gray-800 dark:border-gray-700 shadow">
+            <iframe
+              className="w-full rounded shadow"
+              src="https://forms.office.com/pages/responsepage.aspx?id=ygWfal5nYk2aT_HMz7cu2ZBbvZkClzlDv_JDKnxdx_JUMTFBUzFUMU5HWTFUVUlEN1FGQUE2NERKRiQlQCN0PWcu"
+              height="730"
+              frameBorder="0"
+              marginHeight={0}
+              marginWidth={0}
+            />
+          </div>
+          {/* Card com a Consulta de Fabricante */}
+          {/* Card de Upgrade / Downgrade */}
+            <div className="border rounded bg-white dark:bg-gray-800 p-4">
+              <h2 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">
+                Consulta de Fabricante por MAC
+              </h2>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={mac}
+                  onChange={(e) => setMac(e.target.value)}
+                  placeholder="Ex: 00:1A:2B:XX:XX:XX"
+                  className="text-center p-2 border rounded dark:bg-gray-700 dark:text-white"
+                />
+                <button
+                  onClick={handleClear}
+                  className="px-4 py-2 bg-blue-600 text-white rounded"
+                >
+                  Limpar
+                </button>
+              </div>
+          <div className="rounded-lg  bg-white dark:bg-gray-800 dark:border-gray-700 shadow">
+            {/* Bloco de Consulta de MAC */}
+            {vendor && (
+              <a
+                href={`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
+                  vendor
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block mt-4 text-green-700 dark:text-green-400 cursor-pointer"
+                style={{ whiteSpace: "pre-line" }}
+              >
+                <strong>{formatVendor(vendor, 29)}</strong>
+              </a>
+            )}
+            {vendor === null && vendor !== undefined && (
+              <p className="mt-4 text-red-600 dark:text-red-400">
+                Fabricante não encontrado.
+              </p>
+            )}
+          </div>
+            </div>
         </div>
       </div>
 
