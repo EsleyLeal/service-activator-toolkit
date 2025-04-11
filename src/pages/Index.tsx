@@ -143,9 +143,9 @@ const Index = () => {
 
         {/* Suporte Avançado */}
         <div className="text-center mt-8 p-4 border rounded-lg bg-white shadow dark:bg-gray-800 dark:border-gray-700">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
+          {/* <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
             Suporte Avançado
-          </h2>
+          </h2> */}
 
           {/* Componente MacLookup, que agora atualiza o estado vendor do pai */}
           <MacLookup vendor={vendor} setVendor={setVendor} />

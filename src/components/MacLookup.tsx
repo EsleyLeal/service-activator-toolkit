@@ -26,7 +26,7 @@ export function MacLookup({ vendor, setVendor }: MacLookupProps) {
   };
 
   return (
-    <div className="p-4 border rounded shadow-md bg-white dark:bg-gray-800">
+    <div className="p-4 border rounded bg-white dark:bg-gray-800">
       <h2 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">
         Consulta de Fabricante por MAC
       </h2>
