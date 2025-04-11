@@ -1,37 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import ServiceActivationForm from '@/components/ServiceActivationForm';
-import slogans from '@/data/slogans';
-import { MacLookup } from '@/components/MacLookup';
+import React, { useState, useEffect } from "react";
+import ServiceActivationForm from "@/components/ServiceActivationForm";
+import slogans from "@/data/slogans";
+import { MacLookup } from "@/components/MacLookup";
+
+// Função para formatar o vendor: insere quebra de linha após 29 caracteres
+function formatVendor(text: string, limit: number = 30): string {
+  if (text.length > limit) {
+    return text.slice(0, limit) + "\n" + text.slice(limit);
+  }
+  return text;
+}
 
 const Index = () => {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      const savedMode = localStorage.getItem('theme');
-      return savedMode ? savedMode === 'dark' : false;
+    if (typeof window !== "undefined") {
+      const savedMode = localStorage.getItem("theme");
+      return savedMode ? savedMode === "dark" : false;
     }
     return false;
   });
 
-  const [slogan, setSlogan] = useState<string>('Toolkit de Ativação de Serviços');
+  const [slogan, setSlogan] = useState<string>("Toolkit de Ativação de Serviços");
+
+  // Estado para o fabricante (vendor) vindo do MacLookup
+  const [vendor, setVendor] = useState<string | null>(null);
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * slogans.length);
     setSlogan(slogans[randomIndex]);
   }, []);
-  
+
   useEffect(() => {
     if (isDarkMode) {
-      localStorage.setItem('theme', 'dark');
-      document.documentElement.classList.add('dark');
+      localStorage.setItem("theme", "dark");
+      document.documentElement.classList.add("dark");
     } else {
-      localStorage.setItem('theme', 'light');
-      document.documentElement.classList.remove('dark');
+      localStorage.setItem("theme", "light");
+      document.documentElement.classList.remove("dark");
     }
   }, [isDarkMode]);
-  
+
   useEffect(() => {
     let currentIndex = -1;
-  
+
     const updateSlogan = () => {
       let newIndex;
       do {
@@ -40,37 +51,49 @@ const Index = () => {
       currentIndex = newIndex;
       setSlogan(slogans[newIndex]);
     };
-  
+
     updateSlogan(); // chama imediatamente na montagem
-  
     const interval = setInterval(updateSlogan, 180000); // 3 minutos
-  
-    return () => clearInterval(interval); // limpa o intervalo ao desmontar
+    return () => clearInterval(interval);
   }, [slogans]);
 
-  const copiarMensagem = (tipo: 'compatível' | 'incompatível') => {
-    let mensagem = '';
-
-    if (tipo === 'compatível') {
+  const copiarMensagem = (tipo: "compatível" | "incompatível") => {
+    let mensagem = "";
+    if (tipo === "compatível") {
       mensagem = "Equipamento compatível com o plano, não necessário a troca.";
-    } else if (tipo === 'incompatível') {
-      mensagem = "Equipamento não compatível com o plano, favor mandar um técnico ao local para realizar a troca do equipamento.";
+    } else if (tipo === "incompatível") {
+      mensagem =
+        "Equipamento não compatível com o plano, favor mandar um técnico ao local para realizar a troca do equipamento.";
     }
-
-    navigator.clipboard.writeText(mensagem).then(() => {
-      console.log('Mensagem copiada com sucesso!');
-    }).catch(err => {
-      console.error('Erro ao copiar mensagem:', err);
-    });
+    navigator.clipboard
+      .writeText(mensagem)
+      .then(() => {
+        console.log("Mensagem copiada com sucesso!");
+      })
+      .catch((err) => {
+        console.error("Erro ao copiar mensagem:", err);
+      });
   };
 
   return (
-    <div className={`min-h-screen py-8 px-4 ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <div
+      className={`min-h-screen py-8 px-4 ${
+        isDarkMode ? "bg-gray-900" : "bg-gray-50"
+      }`}
+    >
       <div className="mb-8 text-center">
-        <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-blue-400' : 'text-blue-700'}`}>
+        <h1
+          className={`text-3xl font-bold ${
+            isDarkMode ? "text-blue-400" : "text-blue-700"
+          }`}
+        >
           {slogan}
         </h1>
-        <p className={`text-gray-600 mt-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+        <p
+          className={`text-gray-600 mt-2 ${
+            isDarkMode ? "text-gray-300" : "text-gray-600"
+          }`}
+        >
           Gerenciamento de ativações, mudanças e verificações da rede
         </p>
       </div>
@@ -108,7 +131,7 @@ const Index = () => {
           </iframe>
           <button
             className="mt-8 px-4 py-2 bg-blue-500 text-white rounded"
-            onClick={() => setIsDarkMode(prev => !prev)}
+            onClick={() => setIsDarkMode((prev) => !prev)}
           >
             Toggle Dark Mode
           </button>
@@ -119,36 +142,54 @@ const Index = () => {
         </div>
 
         {/* Suporte Avançado */}
-<div className="text-center mt-8 p-4 border rounded-lg bg-white shadow dark:bg-gray-800 dark:border-gray-700">
-  <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
-    Suporte Avançado
-  </h2>
+        <div className="text-center mt-8 p-4 border rounded-lg bg-white shadow dark:bg-gray-800 dark:border-gray-700">
+          <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
+            Suporte Avançado
+          </h2>
 
-  <MacLookup />
+          {/* Componente MacLookup, que agora atualiza o estado vendor do pai */}
+          <MacLookup vendor={vendor} setVendor={setVendor} />
 
-  {/* Título Upgrade/Downgrade */}
-  <div className="mt-6">
-    <h3 className="text-md font-medium text-gray-800 dark:text-gray-100 mb-2">
-      Upgrade / Downgrade
-    </h3>
-    <br />
+          {/* Exibe o resultado do lookup fora do componente MacLookup,
+              separando em duas linhas se ultrapassar 29 caracteres */}
+          {vendor && (
+          <a
+            href={`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(vendor)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 text-green-700 dark:text-green-400 cursor-pointer"
+            style={{ whiteSpace: "pre-line" }}
+          >
+            <strong>{formatVendor(vendor, 29)}</strong>
+          </a>
+          )}
+          {vendor === null && vendor !== undefined && (
+            <p className="mt-4 text-red-600 dark:text-red-400">
+              Fabricante não encontrado.
+            </p>
+          )}
 
-    {/* Botões centralizados */}
-    <div className="flex justify-center gap-4">
-      <button
-        onClick={() => copiarMensagem('compatível')}
-        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-      >
-        Compatível
-      </button>
-      <button
-        onClick={() => copiarMensagem('incompatível')}
-        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-      >
-        Incompatível
-      </button>
-    </div>
-  </div>
+          {/* Título Upgrade/Downgrade */}
+          <div className="mt-6">
+            <h3 className="text-md font-medium text-gray-800 dark:text-gray-100 mb-2">
+              Upgrade / Downgrade
+            </h3>
+            <br />
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => copiarMensagem("compatível")}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+              >
+                Compatível
+              </button>
+              <button
+                onClick={() => copiarMensagem("incompatível")}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+              >
+                Incompatível
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

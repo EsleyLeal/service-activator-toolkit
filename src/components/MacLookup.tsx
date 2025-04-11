@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getVendorByMac } from "../utils/getVendorByMac";
 
-export function MacLookup() {
-  const [mac, setMac] = useState("");
-  const [vendor, setVendor] = useState<string | null>(null);
+interface MacLookupProps {
+  vendor: string | null;
+  setVendor: (vendor: string | null) => void;
+}
 
-  const handleLookup = () => {
-    const result = getVendorByMac(mac);
-    setVendor(result);
+export function MacLookup({ vendor, setVendor }: MacLookupProps) {
+  const [mac, setMac] = useState("");
+
+  // Atualiza o vendor automaticamente assim que o mac muda
+  useEffect(() => {
+    if (mac.trim() === "") {
+      setVendor(null);
+    } else if (mac.length >= 6) {
+      const result = getVendorByMac(mac);
+      setVendor(result);
+    }
+  }, [mac, setVendor]);
+
+  // Função para limpar os valores
+  const handleClear = () => {
+    setMac("");
+    setVendor(null);
   };
 
   return (
@@ -21,25 +36,17 @@ export function MacLookup() {
           value={mac}
           onChange={(e) => setMac(e.target.value)}
           placeholder="Ex: 00:1A:2B:XX:XX:XX"
-          className="flex-1 p-2 border rounded dark:bg-gray-700 dark:text-white"
+          className="text-center p-2 border rounded dark:bg-gray-700 dark:text-white"
         />
         <button
-          onClick={handleLookup}
+          onClick={handleClear}
           className="px-4 py-2 bg-blue-600 text-white rounded"
         >
-          Consultar
+          Limpar
         </button>
       </div>
-      {vendor && (
-        <p className="mt-4 text-green-700 dark:text-green-400">
-          <strong>Fabricante:</strong> {vendor}
-        </p>
-      )}
-      {vendor === null && mac.length >= 6 && (
-        <p className="mt-4 text-red-600 dark:text-red-400">
-          Fabricante não encontrado.
-        </p>
-      )}
+      {/* Opcional: você pode remover a exibição de vendor daqui,
+          já que iremos exibí-lo no index.tsx */}
     </div>
   );
 }
