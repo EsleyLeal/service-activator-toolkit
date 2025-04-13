@@ -156,15 +156,20 @@ export const useServiceActivationForm = () => {
     }
 
     if (formData.serviceType === 'telephony-activation') {
-      if (!formData.phoneNumber) {
+      const missingFields = [];
+      if (!formData.phoneNumber) missingFields.push("Número Atribuído");
+      if (!formData.sipPassword) missingFields.push("Senha SIPULSE");
+      
+      if (missingFields.length > 0) {
         toast({
           title: "Erro",
-          description: "Por favor, informe o número de telefone.",
+          description: `Por favor, preencha os campos : ${missingFields.join(', ')}`,
           variant: "destructive",
         });
         return false;
       }
     }
+    
 
     if (formData.serviceType === 'telephony-activation' && formData.phoneNumber) {
       setFormData(prev => ({

@@ -148,7 +148,7 @@ const getCurrentDate = () => {
         <p>NUMERO ATRIBUIDO - {phoneDisplay}</p>
         <p>SENHA SIPULSE - {formData.sipPassword}</p>
         <p>SIPSERVER - sip:{phoneDisplay}@172.31.2.18</p>
-        <p>INDEX - {formData.indexValue}</p>
+        {formData.indexValue && <p>INDEX - {formData.indexValue}</p>}
         {formData.sipIp && <p>IP - {formData.sipIp}</p>}
       </div>
     );
