@@ -4,6 +4,7 @@ export interface ServiceActivationFormData {
   client: string;
   technician: string;
   code: string;
+  
   fhtt: string;
   fhttNew?: string;
   patrimony: string;

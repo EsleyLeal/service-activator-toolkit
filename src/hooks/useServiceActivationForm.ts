@@ -48,7 +48,6 @@ export const useServiceActivationForm = () => {
   datacomUsername: '',
   datacomPassword: '',
   clienteNaPorta: '',
- 
   });
 
   const [showResults, setShowResults] = useState(false);
@@ -146,7 +145,7 @@ export const useServiceActivationForm = () => {
        ) {
       if (!formData.client || !formData.technician || !formData.code || 
           !formData.fhtt || !formData.patrimony || !formData.cto || 
-          !formData.olt) {
+          !formData.olt || !formData.olt || !formData.signalStrength) {
         toast({
           title: "Erro",
           description: "Por favor, preencha todos os campos obrigatórios.",

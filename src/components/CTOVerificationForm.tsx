@@ -16,7 +16,7 @@ import { ServiceActivationFormData, OLTOption } from '@/types';
 
 interface CTOVerificationFormProps {
   formData: ServiceActivationFormData;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   handleSelectChange: (name: string, value: string) => void;
   oltOptions: OLTOption[];
   onFusionChange: (fusions: string[]) => void;
@@ -101,6 +101,8 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
       return updated;
     });
   };
+
+  
   
 
   const handlePortCountChange = (value: "8" | "16") => {
@@ -336,6 +338,14 @@ const CTOVerificationForm: React.FC<CTOVerificationFormProps> = ({
               
             );
           })}
+                <textarea
+                name="ponOutside"
+                id="ponOutside"
+                value={formData.ponOutside || ''}
+                onChange={handleInputChange}
+                className="text-black w-full h-20 p-4 resize-none" 
+                placeholder='FORA NA PON -'
+/>
       </TabsContent>
 
       <TabsContent value="fusion" className="p-4 border rounded-md">

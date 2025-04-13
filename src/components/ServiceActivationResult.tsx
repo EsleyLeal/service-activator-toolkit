@@ -188,6 +188,8 @@ const getCurrentDate = () => {
         {ponNumbers.map(num => (
           <p key={num}>{num} - {ponSlots[num] || ''}</p>
         ))}
+
+      <p className='mb-4 mt-6 '>FORA NA PON - <br /><br />{formData.ponOutside}</p>
       </div>
     );
   };
