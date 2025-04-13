@@ -178,6 +178,24 @@ export const useServiceActivationForm = () => {
       }));
     }
 
+    if (formData.serviceType === 'equipment-change') {
+      const missingFields = [];
+      if (!formData.client) missingFields.push("Cliente");
+      if (!formData.technician) missingFields.push("Tecnico");
+      if (!formData.changeType) missingFields.push("Tipo de Equipamento");
+      if (!formData.topology) missingFields.push("Topologia");
+      if (!formData.olt) missingFields.push("OLT");
+      
+      if (missingFields.length > 0) {
+        toast({
+          title: "Erro",
+          description: `Por favor, preencha os campos : ${missingFields.join(',')}`,
+          variant: "destructive",
+        });
+        return false;
+      }
+    }
+
     return true;
   };
 
