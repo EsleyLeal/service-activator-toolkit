@@ -28,7 +28,6 @@ const FormActions: React.FC<FormActionsProps> = ({
           <Button type="button" variant="outline">
             Limpar 
           </Button>
-          
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -39,15 +38,30 @@ const FormActions: React.FC<FormActionsProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={onReset} >Confirmar</AlertDialogAction>
-            
+            <AlertDialogAction onClick={onReset}>Confirmar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      <Button type={onSubmit ? "button" : "submit"} onClick={onSubmit}>
-        Gerar Informações
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button type={onSubmit ? "button" : "submit"}>
+            Gerar Informações
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmação</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja gerar as informações?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={onSubmit}>Confirmar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
