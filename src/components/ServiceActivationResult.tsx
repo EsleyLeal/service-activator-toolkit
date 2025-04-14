@@ -20,6 +20,7 @@ const ServiceActivationResult: React.FC<ServiceActivationResultProps> = ({
 }) => {
   const { toast } = useToast();
   const [sessionContent, setSessionContent] = useState<string>('');
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const getSignalClass = () => {
     const signal = parseFloat(formData.signalStrength);
@@ -371,7 +372,7 @@ const getCurrentDate = () => {
         <div className="flex justify-between">
           <Button 
             variant="outline" 
-            onClick={resetForm}
+            onClick={() => setShowConfirm(true)}
             className="flex items-center gap-2"
             title="Ao clicar em 'Nova ativação', você inicia um novo suporte. Garanta que este suporte foi copiado."
           >
@@ -393,6 +394,33 @@ const getCurrentDate = () => {
             </Button> */}
         </div>
       </CardContent>
+
+      {/* Modal customizado para confirmação */}
+      {showConfirm && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-gray-800 text-white rounded-md p-6 shadow-lg max-w-sm w-full">
+      <p className="text-lg mb-4">
+        Tem certeza que deseja iniciar uma nova ativação?
+      </p>
+      <div className="flex justify-end space-x-4">
+        <Button 
+          onClick={() => setShowConfirm(false)} 
+          variant="outline"
+        >
+          Cancelar
+        </Button>
+        <Button
+          onClick={() => {
+            resetForm();
+            setShowConfirm(false);
+          }}
+        >
+          Sim
+        </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
