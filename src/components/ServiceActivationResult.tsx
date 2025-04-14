@@ -387,10 +387,10 @@ const getCurrentDate = () => {
             Copiar para Área de Transferência
           </Button>
 
-          <Button onClick={downloadContent} className="flex items-center gap-2">
+          {/* <Button onClick={downloadContent} className="flex items-center gap-2">
               <Download size={16} />
               Baixar Resultado
-            </Button>
+            </Button> */}
         </div>
       </CardContent>
     </Card>
