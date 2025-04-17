@@ -27,11 +27,11 @@ const OwnershipChangeForm: React.FC<OwnershipChangeFormProps> = ({
           />
         </div>
         <div>
-          <Label htmlFor="pppoe">PPPoE</Label>
+          <Label htmlFor="pppoeOwner">PPPoE</Label>
           <Input
-            id="pppoe"
-            name="pppoe"
-            value={formData.pppoe || ''}
+            id="pppoeOwner"
+            name="pppoeOwner"
+            value={formData.pppoeOwner}
             onChange={handleInputChange}
             placeholder="pppoe"
           />

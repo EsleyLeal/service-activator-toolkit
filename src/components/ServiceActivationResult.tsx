@@ -279,7 +279,7 @@ const getCurrentDate = () => {
     <div id="result-content" className="whitespace-pre-line text-left">
       <p className="font-bold text-center mb-4">TROCA DE TITULARIDADE REALIZADA COM SUCESSO!</p>
       <p>ANTIGO TITULAR - {formData.client}</p>
-      <p>PPPoE - {formData.pppoe}</p>
+      <p>PPPoE - {formData.pppoeOwner}</p>
       <p>CHAMADO - {formData.called}</p>
       <p>ABERTO POR - {formData.openBy}</p>
       <p>NOVO TITULAR - {formData.newHolder}</p>

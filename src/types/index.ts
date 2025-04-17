@@ -16,6 +16,7 @@ export interface ServiceActivationFormData {
   ctoType: string;
   olt: string;
   pppoe: string;
+  pppoeOwner: string;   
   signalStrength: string;
   phoneNumber?: string;
   sipPassword?: string;
