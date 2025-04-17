@@ -5,16 +5,14 @@ import { Label } from '@/components/ui/label';
 import { ServiceActivationFormData } from '@/types';
 
 interface ServerMigrationFormProps {
-  client:string;
-  technician: string;
+ 
   formData: ServiceActivationFormData;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
   formData,
-  client,
-  technician,
+  
   handleInputChange
 }) => {
   return (
@@ -25,7 +23,7 @@ const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
           <Input
             id="client"
             name="client"
-            value={client}
+            value={formData.client}
             onChange={handleInputChange}
             placeholder="Nome do cliente"
           />
@@ -35,7 +33,7 @@ const ServerMigrationForm: React.FC<ServerMigrationFormProps> = ({
           <Input
             id="technician"
             name="technician"
-            value={technician}
+            value={formData.technician}
             onChange={handleInputChange}
             placeholder="Nome do técnico"
           />
