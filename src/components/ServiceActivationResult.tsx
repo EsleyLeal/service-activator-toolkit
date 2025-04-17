@@ -211,15 +211,13 @@ const getCurrentDate = () => {
         <div className="mt-4">
           <p className="font-semibold mb-2">FUSÃO DE FIBRAS:</p>
           <div className="flex flex-wrap gap-2">
-            {formData.fiberFusion?.map(color => {
-              const fiberClass = FIBER_COLORS.find(f => f.name === color)?.class || '';
-              return (
-                <div key={`fiber-${color}`} className="fiber-row-fusion">
-                  <div className={`fiber-color ${fiberClass}`}></div>
-                  <span>{color}</span>
-                </div>
-              );
-            })}
+          {formData.fiberFusion?.map(entry => (
+  <div key={entry} className="fiber-row-fusion">
+    <div className={`fiber-color`}></div>
+    <span>{entry}</span>
+  </div>
+))}
+
           </div>
         </div>
       </div>
