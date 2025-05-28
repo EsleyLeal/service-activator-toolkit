@@ -25,7 +25,7 @@ const Index = () => {
   const [vendor, setVendor] = useState<string | null>(null);
   const [mac, setMac] = useState<string>("");
   const [ip, setIp] = useState<string>("");
-  const [manualVendor, setManualVendor] = useState<"HUAWEI" | "TP-LINK" | "">("");
+  const [manualVendor, setManualVendor] = useState<"Huawei" | "TP-LINK" | "">("");
 
 
 
@@ -215,11 +215,11 @@ const Index = () => {
     </label>
     <select
       value={manualVendor}
-      onChange={(e) => setManualVendor(e.target.value as "HUAWEI" | "TP-LINK" | "")}
+      onChange={(e) => setManualVendor(e.target.value as "Huawei" | "TP-LINK" | "")}
       className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
     >
       <option value="">-- Escolher --</option>
-      <option value="HUAWEI">HUAWEI</option>
+      <option value="Huawei">Huawei</option>
       <option value="TP-LINK">TP-LINK</option>
     </select>
   </div>
@@ -242,7 +242,7 @@ const Index = () => {
 
       {ip && (
         <div className="mt-3 space-y-2">
-          {(manualVendor || vendor)?.includes("HUAWEI") ? (
+          {(manualVendor || vendor)?.includes("Huawei") ? (
             <>
               <a
                 href={`https://${ip}:8080`}
@@ -250,7 +250,7 @@ const Index = () => {
                 rel="noopener noreferrer"
                 className="block text-blue-600 dark:text-blue-300 hover:underline"
               >
-                Acessar HUAWEI via HTTPS porta 8080
+                Acessar Huawei via HTTPS porta 8080
               </a>
               <a
                 href={`https://${ip}:9090`}
@@ -258,7 +258,7 @@ const Index = () => {
                 rel="noopener noreferrer"
                 className="block text-blue-600 dark:text-blue-300 hover:underline"
               >
-                Acessar HUAWEI via HTTPS porta 9090
+                Acessar Huawei via HTTPS porta 9090
               </a>
             </>
           ) : (
