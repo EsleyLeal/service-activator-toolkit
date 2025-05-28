@@ -24,6 +24,8 @@ const Index = () => {
   const [slogan, setSlogan] = useState<string>("Toolkit de Ativação de Serviços");
   const [vendor, setVendor] = useState<string | null>(null);
   const [mac, setMac] = useState<string>("");
+  const [ip, setIp] = useState<string>("");
+
 
   // Atualiza o slogan aleatoriamente
   useEffect(() => {
@@ -192,24 +194,80 @@ const Index = () => {
           <div className="rounded-lg  bg-white dark:bg-gray-800 dark:border-gray-700 shadow">
             {/* Bloco de Consulta de MAC */}
             {vendor && (
-              <a
-                href={`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
-                  vendor
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block mt-4 text-green-700 dark:text-green-400 cursor-pointer"
-                style={{ whiteSpace: "pre-line" }}
-              >
-                <strong>{formatVendor(vendor, 29)}</strong>
-              </a>
-            )}
-            {vendor === null && vendor !== undefined && (
-              <p className="mt-4 text-red-600 dark:text-red-400">
-                Fabricante não encontrado.
-              </p>
+  <>
+    <a
+      href={`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(vendor)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block mt-4 text-green-700 dark:text-green-400 cursor-pointer"
+      style={{ whiteSpace: "pre-line" }}
+    >
+      <strong>{formatVendor(vendor, 29)}</strong>
+    </a>
+
+    {(vendor.includes("HUAWEI") || vendor.includes("TP-LINK")) && (
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          IP para teste de gerenciamento:
+        </label>
+        <input
+          type="text"
+          value={ip}
+          onChange={(e) => setIp(e.target.value)}
+          placeholder="Ex: 192.168.1.1"
+          className="w-full p-2 border rounded dark:bg-gray-700 dark:text-white"
+        />
+
+        {ip && (
+          <div className="mt-3 space-y-2">
+            {vendor.includes("HUAWEI") ? (
+              <>
+                <a
+                  href={`https://${ip}:8080`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-blue-600 dark:text-blue-300 hover:underline"
+                >
+                  Acessar HUAWEI via HTTPS porta 8080
+                </a>
+                <a
+                  href={`https://${ip}:9090`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-blue-600 dark:text-blue-300 hover:underline"
+                >
+                  Acessar HUAWEI via HTTPS porta 9090
+                </a>
+              </>
+            ) : (
+              <>
+                <a
+                  href={`http://${ip}:8080`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-green-700 dark:text-green-300 hover:underline"
+                >
+                  Acessar TP-Link Porta: 8080
+                </a>
+                <a
+                  href={`http://${ip}:9090`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-green-700 dark:text-green-300 hover:underline"
+                >
+                  Acessar TP-Link Porta: 9090
+                </a>
+              </>
             )}
           </div>
+        )}
+      </div>
+    )}
+  </>
+)}
+
+          </div>
+          
             </div>
         </div>
       </div>
