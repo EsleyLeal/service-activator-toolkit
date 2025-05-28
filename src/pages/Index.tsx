@@ -86,8 +86,8 @@ const Index = () => {
   const handleClear = () => {
     setMac("");
     setVendor(null);
+    setIp(""); // limpa também o campo de IP
   };
-
   return (
     <div
       className={`min-h-screen py-8 px-4 ${
