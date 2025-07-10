@@ -1,8 +1,8 @@
-# Toolkit de Ativação de Serviços
+# Toolkit de Ativação de Serviços NOC
 
 Gerenciamento de ativações, mudanças e verificações de rede.
 
-![Captura de Tela](./assets/screenshot.png)
+<img width="1162" height="575" alt="Captura de tela 2025-07-10 142824" src="https://github.com/user-attachments/assets/4db64348-4142-4b4a-ad4c-297f8c1d789c" />
 
 ## Funcionalidades
 
