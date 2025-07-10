@@ -37,14 +37,6 @@ Gerenciamento de ativações, mudanças e verificações de rede.
 - **public/** – arquivos estáticos  
 - **docs/** – documentação adicional
 
-## Contribuindo
-
-1. Faça um fork deste repositório  
-2. Crie uma branch para sua feature:  
-        feature/nova-funcionalidade  
-3. Implemente e teste suas alterações  
-4. Abra um pull request descrevendo suas mudanças
-
 ## Licença
 
 Este projeto está licenciado sob a licença MIT.
