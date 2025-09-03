@@ -150,7 +150,7 @@ const Index = () => {
             className="px-6 py-1 bg-blue-500 text-white rounded"
             onClick={() => setIsDarkMode((prev) => !prev)}
           >
-            DarkMode
+            Vagalume
           </button>
         </div>
 
