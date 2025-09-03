@@ -294,9 +294,21 @@ const Index = () => {
       </div>
 
       {/* FOOTER */}
-      <footer className="mt-12 text-center border-t pt-6 text-sm text-gray-600 dark:text-gray-400">
-        Desenvolvido com 💙 pelo <strong>Centro de Operações CO N1</strong> — Time unido, rede forte!
-      </footer>
+<footer className="mt-12 text-center border-t pt-6 text-sm text-gray-600 dark:text-gray-400">
+  <strong>Centro de Operações CO N1</strong> — Time unido, rede forte!
+  <br />
+  <span>
+    Criado por{" "}
+    <a
+      href="https://esleylealportfolio.vercel.app/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-500 hover:underline"
+    >
+      Esley Leal
+    </a>
+  </span>
+</footer>
     </div>
   );
 };
