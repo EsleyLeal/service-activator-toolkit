@@ -109,7 +109,6 @@ const slogans: string[] = [
   "Sem lag, sem drama, só conexão que chama.",
   "O Wi-Fi que não te faz gritar 'reinicia o roteador!'",
   "Conectamos até os sonhos mais distantes.",
-  "A rede que aguenta até o chefe pedindo relatório às 23h.",
   "Velocidade que faz o streaming voar e o coração sorrir.",
   "Sem quedas, só vibes altas.",
   "Nossa fibra é tão forte que segura até o mau humor.",
