@@ -146,12 +146,12 @@ const Index = () => {
               </button>
             </div>
           </div>
-          {/* <button
-            className="px-4 py-2 bg-blue-500 text-white rounded"
+          <button
+            className="px-6 py-1 bg-blue-500 text-white rounded"
             onClick={() => setIsDarkMode((prev) => !prev)}
           >
-            Toggle Dark Mode
-          </button> */}
+            DarkMode
+          </button>
         </div>
 
         {/* Coluna 2: Formulário principal */}
